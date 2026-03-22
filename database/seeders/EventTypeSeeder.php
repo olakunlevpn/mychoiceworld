@@ -22,12 +22,14 @@ class EventTypeSeeder extends Seeder
         ];
 
         foreach ($eventTypes as $eventType) {
-            EventType::create([
-                'name' => $eventType['name'],
-                'slug' => Str::slug($eventType['name']),
-                'icon' => $eventType['icon'],
-                'is_active' => true,
-            ]);
+            EventType::firstOrCreate(
+                ['slug' => Str::slug($eventType['name'])],
+                [
+                    'name' => $eventType['name'],
+                    'icon' => $eventType['icon'],
+                    'is_active' => true,
+                ]
+            );
         }
     }
 }

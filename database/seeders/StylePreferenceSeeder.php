@@ -22,11 +22,13 @@ class StylePreferenceSeeder extends Seeder
         ];
 
         foreach ($styles as $style) {
-            StylePreference::create([
-                'name' => $style,
-                'slug' => Str::slug($style),
-                'is_active' => true,
-            ]);
+            StylePreference::firstOrCreate(
+                ['slug' => Str::slug($style)],
+                [
+                    'name' => $style,
+                    'is_active' => true,
+                ]
+            );
         }
     }
 }

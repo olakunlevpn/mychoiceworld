@@ -23,23 +23,27 @@ class CategorySeeder extends Seeder
         foreach ($categories as $parentName => $children) {
             $sortOrder++;
 
-            $parent = Category::create([
-                'name' => $parentName,
-                'slug' => Str::slug($parentName),
-                'sort_order' => $sortOrder,
-                'is_active' => true,
-            ]);
+            $parent = Category::firstOrCreate(
+                ['slug' => Str::slug($parentName)],
+                [
+                    'name' => $parentName,
+                    'sort_order' => $sortOrder,
+                    'is_active' => true,
+                ]
+            );
 
             foreach ($children as $childName) {
                 $sortOrder++;
 
-                Category::create([
-                    'name' => $childName,
-                    'slug' => Str::slug($childName),
-                    'parent_id' => $parent->id,
-                    'sort_order' => $sortOrder,
-                    'is_active' => true,
-                ]);
+                Category::firstOrCreate(
+                    ['slug' => Str::slug($childName)],
+                    [
+                        'name' => $childName,
+                        'parent_id' => $parent->id,
+                        'sort_order' => $sortOrder,
+                        'is_active' => true,
+                    ]
+                );
             }
         }
     }

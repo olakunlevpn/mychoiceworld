@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  background-color: #020202;
+}
+
+@layer base {
+  [type='text']:focus,
+  [type='email']:focus,
+  [type='url']:focus,
+  [type='password']:focus,
+  [type='number']:focus,
+  [type='date']:focus,
+  [type='datetime-local']:focus,
+  [type='month']:focus,
+  [type='search']:focus,
+  [type='tel']:focus,
+  [type='time']:focus,
+  [type='week']:focus,
+  [multiple]:focus,
+  textarea:focus,
+  select:focus {
+    --tw-ring-color: #14878E;
+    border-color: #14878E;
+  }
+
+  [type='checkbox']:focus,
+  [type='radio']:focus {
+    --tw-ring-color: #14878E;
+  }
+
+  [type='checkbox']:checked,
+  [type='radio']:checked {
+    background-color: #14878E;
+    border-color: #14878E;
+  }
+
+  [type='checkbox']:checked:hover,
+  [type='radio']:checked:hover {
+    background-color: #1b646c;
+    border-color: #1b646c;
+  }
+
+  [type='checkbox']:checked:focus,
+  [type='radio']:checked:focus {
+    background-color: #14878E;
+    border-color: #14878E;
+  }
+}

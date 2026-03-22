@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'name' => 'Name',
+    'email' => 'Email',
+    'phone' => 'Phone',
+    'role' => 'Role',
+    'avatar' => 'Avatar',
+    'is_active' => 'Is Active',
+    'email_verified_at' => 'Email Verified At',
+    'password' => 'Password',
+    'new_password' => 'New Password',
+    'password_confirmation' => 'Password Confirmation',
+    'details' => 'User Details',
+    'password_section' => 'Change Password',
+    'password_section_description' => 'Leave blank to keep the current password.',
+    'created_at' => 'Created At',
+    'total_users' => 'Total Users',
+    'customers' => 'Customers',
+    'vendors' => 'Vendors',
+    'admins' => 'Admins',
+    'active_users' => 'Active Users',
+    'inactive_users' => 'Inactive Users',
+    'deactivate' => 'Deactivate',
+    'activate' => 'Activate',
+    'email_verified' => 'Email Verified',
+];

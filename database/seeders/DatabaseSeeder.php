@@ -21,6 +21,10 @@ class DatabaseSeeder extends Seeder
             WishlistSeeder::class,
             ColorPaletteSeeder::class,
             VendorAnalyticsSeeder::class,
+            HeroSlideSeeder::class,
+            PageSeeder::class,
+            FaqSeeder::class,
+            HelpSeeder::class,
         ]);
     }
 }

@@ -15,6 +15,7 @@ import {
 import { Link, router, usePage } from '@inertiajs/react'
 import CookieBanner from '@/Components/CookieBanner'
 import LocationModal from '@/Components/LocationModal'
+import SiteLogo from '@/Components/SiteLogo'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useLocation } from '@/contexts/LocationContext'
 import type { SharedProps } from '@/types'
@@ -145,11 +146,7 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                                 <div className="hidden lg:flex lg:flex-1 lg:items-center">
                                     <Link href="/">
                                         <span className="sr-only">{settings.site_name}</span>
-                                        {settings.logo_path ? (
-                                            <img alt={settings.site_name} src={settings.logo_path} className="h-12 w-auto" />
-                                        ) : (
-                                            <span className="text-xl font-bold text-gray-900 dark:text-white">{settings.site_name}</span>
-                                        )}
+                                        <SiteLogo variant="desktop" className="h-12 w-auto" />
                                     </Link>
                                 </div>
 
@@ -174,7 +171,7 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                                 </div>
 
                                 <Link href="/" className="lg:hidden">
-                                    <span className="text-lg font-bold text-gray-900 dark:text-white">{settings.site_name}</span>
+                                    <SiteLogo variant="mobile" className="h-8 w-auto" />
                                 </Link>
 
                                 <div className="flex flex-1 items-center justify-end gap-1">
@@ -211,11 +208,7 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                     <div className="py-16 lg:grid lg:grid-cols-4 lg:gap-x-8">
                         <div>
                             <Link href="/">
-                                {settings.logo_path ? (
-                                    <img alt={settings.site_name} src={settings.logo_path} className="h-10 w-auto" />
-                                ) : (
-                                    <span className="text-xl font-bold text-gray-900 dark:text-white">{settings.site_name}</span>
-                                )}
+                                <SiteLogo variant="desktop" className="h-10 w-auto" />
                             </Link>
                             <p className="mt-4 text-sm text-gray-600 dark:text-gray-300">
                                 {settings.site_description || 'Your trusted marketplace for discovering fashion from local boutiques.'}

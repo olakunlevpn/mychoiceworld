@@ -285,6 +285,10 @@ export interface SharedProps {
         site_description: string;
         support_email: string;
         logo_path?: string;
+        logo_desktop_dark?: string;
+        logo_desktop_light?: string;
+        logo_mobile_dark?: string;
+        logo_mobile_light?: string;
         favicon_path?: string;
         currency_code: string;
         currency_symbol: string;

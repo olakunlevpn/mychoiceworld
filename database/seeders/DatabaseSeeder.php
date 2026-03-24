@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             PageSeeder::class,
             FaqSeeder::class,
             HelpSeeder::class,
+            BrandingSeeder::class,
         ]);
     }
 }

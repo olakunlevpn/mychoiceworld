@@ -1,5 +1,6 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import SiteLogo from '@/Components/SiteLogo';
 import type { SharedProps } from '@/types';
 
 export default function Register() {
@@ -22,7 +23,7 @@ export default function Register() {
                 <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-6 py-8 sm:px-10">
                     <div className="flex justify-center">
                         <Link href="/">
-                            {settings.logo_path ? <img alt={settings.site_name} src={settings.logo_path} className="h-10 w-auto" /> : <span className="text-2xl font-bold text-gray-900 dark:text-white">{settings.site_name}</span>}
+                            <SiteLogo variant="desktop" className="h-10 w-auto" />
                         </Link>
                     </div>
                     <h2 className="mt-6 text-center text-2xl font-bold text-gray-900 dark:text-white">Create your account</h2>

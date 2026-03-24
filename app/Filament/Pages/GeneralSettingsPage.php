@@ -56,6 +56,10 @@ class GeneralSettingsPage extends Page implements HasForms
             'site_description' => $settings->site_description,
             'support_email' => $settings->support_email,
             'logo_path' => $settings->logo_path,
+            'logo_desktop_dark' => $settings->logo_desktop_dark,
+            'logo_desktop_light' => $settings->logo_desktop_light,
+            'logo_mobile_dark' => $settings->logo_mobile_dark,
+            'logo_mobile_light' => $settings->logo_mobile_light,
             'favicon_path' => $settings->favicon_path,
             'currency_code' => $settings->currency_code,
             'currency_symbol' => $settings->currency_symbol,
@@ -87,8 +91,26 @@ class GeneralSettingsPage extends Page implements HasForms
                             ->label(__('settings.site_description'))
                             ->maxLength(500),
                         Grid::make(2)->schema([
-                            FileUpload::make('logo_path')
-                                ->label(__('settings.logo'))
+                            FileUpload::make('logo_desktop_dark')
+                                ->label(__('settings.logo_desktop_dark'))
+                                ->image()
+                                ->disk('public')
+                                ->directory('branding')
+                                ->visibility('public'),
+                            FileUpload::make('logo_desktop_light')
+                                ->label(__('settings.logo_desktop_light'))
+                                ->image()
+                                ->disk('public')
+                                ->directory('branding')
+                                ->visibility('public'),
+                            FileUpload::make('logo_mobile_dark')
+                                ->label(__('settings.logo_mobile_dark'))
+                                ->image()
+                                ->disk('public')
+                                ->directory('branding')
+                                ->visibility('public'),
+                            FileUpload::make('logo_mobile_light')
+                                ->label(__('settings.logo_mobile_light'))
                                 ->image()
                                 ->disk('public')
                                 ->directory('branding')
@@ -140,7 +162,11 @@ class GeneralSettingsPage extends Page implements HasForms
         $settings->site_name = $data['site_name'];
         $settings->site_description = $data['site_description'] ?? '';
         $settings->support_email = $data['support_email'];
-        $settings->logo_path = $data['logo_path'];
+        $settings->logo_path = $data['logo_desktop_dark'] ?? $data['logo_path'];
+        $settings->logo_desktop_dark = $data['logo_desktop_dark'];
+        $settings->logo_desktop_light = $data['logo_desktop_light'];
+        $settings->logo_mobile_dark = $data['logo_mobile_dark'];
+        $settings->logo_mobile_light = $data['logo_mobile_light'];
         $settings->favicon_path = $data['favicon_path'];
         $settings->currency_code = $data['currency_code'];
         $settings->currency_symbol = $data['currency_symbol'];

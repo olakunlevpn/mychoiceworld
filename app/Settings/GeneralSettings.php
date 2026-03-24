@@ -14,6 +14,14 @@ class GeneralSettings extends Settings
 
     public ?string $logo_path;
 
+    public ?string $logo_desktop_dark;
+
+    public ?string $logo_desktop_light;
+
+    public ?string $logo_mobile_dark;
+
+    public ?string $logo_mobile_light;
+
     public ?string $favicon_path;
 
     public string $currency_code;

@@ -1,5 +1,6 @@
 import { Head, Link, useForm, usePage, router } from '@inertiajs/react'
 import { useState, useRef } from 'react'
+import SiteLogo from '@/Components/SiteLogo'
 import type { SharedProps } from '@/types'
 
 const steps = ['Account', 'Store Details', 'License', 'Location']
@@ -53,7 +54,7 @@ export default function VendorRegister() {
                 <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 p-8">
                     <div className="flex justify-center">
                         <Link href="/">
-                            {settings.logo_path ? <img alt={settings.site_name} src={settings.logo_path} className="h-10 w-auto" /> : <span className="text-2xl font-bold text-gray-900 dark:text-white">{settings.site_name}</span>}
+                            <SiteLogo variant="desktop" className="h-10 w-auto" />
                         </Link>
                     </div>
                     <h2 className="mt-6 text-center text-2xl font-bold text-gray-900 dark:text-white">Vendor Registration</h2>

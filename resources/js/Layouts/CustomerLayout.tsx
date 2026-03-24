@@ -12,6 +12,7 @@ import {
     UserCircleIcon as UserCircleIconSolid,
 } from '@heroicons/react/24/solid'
 import { Link, router, usePage } from '@inertiajs/react'
+import SiteLogo from '@/Components/SiteLogo'
 import { useTheme } from '@/contexts/ThemeContext'
 import type { SharedProps } from '@/types'
 
@@ -84,11 +85,7 @@ export default function CustomerLayout({ children }: PropsWithChildren) {
                                 {/* Logo (desktop) */}
                                 <div className="hidden lg:flex lg:flex-1 lg:items-center">
                                     <Link href="/">
-                                        {settings.logo_path ? (
-                                            <img alt={settings.site_name} src={settings.logo_path} className="h-12 w-auto" />
-                                        ) : (
-                                            <span className="text-xl font-bold text-gray-900 dark:text-white">{settings.site_name}</span>
-                                        )}
+                                        <SiteLogo variant="desktop" className="h-12 w-auto" />
                                     </Link>
                                 </div>
 
@@ -116,7 +113,7 @@ export default function CustomerLayout({ children }: PropsWithChildren) {
 
                                 {/* Logo (mobile) */}
                                 <Link href="/" className="lg:hidden">
-                                    <span className="text-lg font-bold text-gray-900 dark:text-white">{settings.site_name}</span>
+                                    <SiteLogo variant="mobile" className="h-8 w-auto" />
                                 </Link>
 
                                 {/* Right icons */}

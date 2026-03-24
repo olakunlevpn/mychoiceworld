@@ -9,26 +9,26 @@ class ProductPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->isVendor();
+        return $user->isAdmin() || $user->isVendor();
     }
 
     public function view(User $user, Product $product): bool
     {
-        return $user->vendor?->id === $product->vendor_id;
+        return $user->isAdmin() || $user->vendor?->id === $product->vendor_id;
     }
 
     public function create(User $user): bool
     {
-        return $user->isVendor();
+        return $user->isAdmin() || $user->isVendor();
     }
 
     public function update(User $user, Product $product): bool
     {
-        return $user->vendor?->id === $product->vendor_id;
+        return $user->isAdmin() || $user->vendor?->id === $product->vendor_id;
     }
 
     public function delete(User $user, Product $product): bool
     {
-        return $user->vendor?->id === $product->vendor_id;
+        return $user->isAdmin() || $user->vendor?->id === $product->vendor_id;
     }
 }

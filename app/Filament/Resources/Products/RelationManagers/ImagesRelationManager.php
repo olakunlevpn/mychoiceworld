@@ -32,6 +32,10 @@ class ImagesRelationManager extends RelationManager
             TextInput::make('alt_text')
                 ->label(__('product.alt_text'))
                 ->maxLength(255),
+            TextInput::make('color')
+                ->label(__('product.color'))
+                ->placeholder('e.g. Emerald, Red, Blue')
+                ->maxLength(100),
             TextInput::make('sort_order')
                 ->label(__('product.sort_order'))
                 ->numeric()
@@ -49,6 +53,8 @@ class ImagesRelationManager extends RelationManager
                     ->label(__('product.image_url')),
                 TextColumn::make('alt_text')
                     ->label(__('product.alt_text')),
+                TextColumn::make('color')
+                    ->label(__('product.color')),
                 TextColumn::make('sort_order')
                     ->label(__('product.sort_order'))
                     ->sortable(),

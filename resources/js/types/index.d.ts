@@ -117,6 +117,7 @@ export interface ProductImage {
     url: string;
     thumbnail_url?: string;
     alt_text?: string;
+    color?: string;
     sort_order: number;
     is_primary: boolean;
 }

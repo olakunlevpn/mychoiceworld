@@ -15,6 +15,7 @@ class ProductImage extends Model
         'url',
         'thumbnail_url',
         'alt_text',
+        'color',
         'sort_order',
         'is_primary',
     ];

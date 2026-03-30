@@ -34,9 +34,39 @@ function cn(...classes: (string | boolean | undefined)[]) {
 
 export default function ProductDetail({ product, relatedProducts, wishlisted: initialWishlisted, sizes, colors }: Props) {
     const { settings } = usePage().props as unknown as SharedProps
-    const [activeImage, setActiveImage] = useState(product.images[0] || null)
-    const [selectedSize, setSelectedSize] = useState(sizes[0] || '')
     const [selectedColor, setSelectedColor] = useState(colors[0]?.name || '')
+
+    const filteredImages = selectedColor
+        ? product.images.filter(img => !img.color || img.color.toLowerCase() === selectedColor.toLowerCase())
+        : product.images
+    const displayImages = filteredImages.length > 0 ? filteredImages : product.images
+
+    const [activeImage, setActiveImage] = useState(displayImages[0] || null)
+
+    const filteredSizes = selectedColor
+        ? product.variants
+            .filter(v => v.is_active && v.color?.toLowerCase() === selectedColor.toLowerCase())
+            .map(v => v.size)
+            .filter((s): s is string => !!s)
+            .filter((v, i, a) => a.indexOf(v) === i)
+        : sizes
+    const [selectedSize, setSelectedSize] = useState(filteredSizes[0] || '')
+
+    const handleColorChange = (colorName: string) => {
+        setSelectedColor(colorName)
+        const colorImages = product.images.filter(img => img.color?.toLowerCase() === colorName.toLowerCase())
+        if (colorImages.length > 0) {
+            setActiveImage(colorImages[0])
+        }
+        const colorSizes = product.variants
+            .filter(v => v.is_active && v.color?.toLowerCase() === colorName.toLowerCase())
+            .map(v => v.size)
+            .filter((s): s is string => !!s)
+            .filter((v, i, a) => a.indexOf(v) === i)
+        if (colorSizes.length > 0) {
+            setSelectedSize(colorSizes[0])
+        }
+    }
     const [wishlisted, setWishlisted] = useState(initialWishlisted)
     const [reserveOpen, setReserveOpen] = useState(false)
     const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -93,9 +123,9 @@ export default function ProductDetail({ product, relatedProducts, wishlisted: in
                                 <img src={activeImage.url} alt={activeImage.alt_text || product.name} className="size-full object-cover transition-transform duration-200" style={zoomStyle} />
                             </div>
                         )}
-                        {product.images.length > 1 && (
+                        {displayImages.length > 1 && (
                             <div className="relative mt-4">
-                                {product.images.length > 4 && (
+                                {displayImages.length > 4 && (
                                     <>
                                         <button type="button" onClick={() => thumbRef.current?.scrollBy({ left: -200, behavior: 'smooth' })} className="absolute -left-3 top-1/2 z-10 -translate-y-1/2 flex size-8 items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                             <ChevronLeftIcon className="size-4 text-gray-700 dark:text-white" />
@@ -106,7 +136,7 @@ export default function ProductDetail({ product, relatedProducts, wishlisted: in
                                     </>
                                 )}
                                 <div ref={thumbRef} className="flex gap-3 overflow-x-auto scrollbar-hide">
-                                    {product.images.map((image) => (
+                                    {displayImages.map((image) => (
                                         <button
                                             key={image.id}
                                             type="button"
@@ -210,11 +240,11 @@ export default function ProductDetail({ product, relatedProducts, wishlisted: in
                         )}
 
                         {/* Size selector */}
-                        {sizes.length > 0 && (
+                        {filteredSizes.length > 0 && (
                             <div className="mt-6">
                                 <p className="text-sm font-semibold text-gray-900 dark:text-white">Size</p>
                                 <div className="mt-2 grid grid-cols-4 gap-2">
-                                    {sizes.map((size) => (
+                                    {filteredSizes.map((size) => (
                                         <button key={size} type="button" onClick={() => setSelectedSize(size)} className={cn(
                                             'rounded-md border py-2.5 text-sm font-semibold transition-all',
                                             selectedSize === size ? 'border-primary-600 bg-primary-600/10 text-primary-600' : 'border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:border-gray-500'
@@ -234,7 +264,7 @@ export default function ProductDetail({ product, relatedProducts, wishlisted: in
                                 </p>
                                 <div className="mt-2 flex gap-3">
                                     {colors.map((color) => (
-                                        <button key={color.hex} type="button" onClick={() => setSelectedColor(color.name)} title={color.name} className={cn(
+                                        <button key={color.hex} type="button" onClick={() => handleColorChange(color.name)} title={color.name} className={cn(
                                             'size-8 rounded-full border-2 transition-all',
                                             selectedColor === color.name ? 'ring-2 ring-primary-600 ring-offset-2 ring-offset-gray-50 dark:ring-offset-dark border-transparent' : 'border-gray-200 dark:border-gray-700 hover:border-gray-500'
                                         )} style={{ backgroundColor: color.hex }} />

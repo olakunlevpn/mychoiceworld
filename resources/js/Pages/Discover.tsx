@@ -261,12 +261,45 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
                     {/* Active filter pills */}
                     {activeFilterCount > 0 && (
                         <div className="mt-4 flex flex-wrap items-center gap-2">
-                            {Object.entries(filters).filter(([, v]) => v).map(([key, value]) => (
-                                <button key={key} type="button" onClick={() => applyFilter(key, '')} className="inline-flex items-center gap-1 rounded-full bg-gray-100 dark:bg-white/5 px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10">
-                                    {key}: {value}
-                                    <XMarkIcon className="size-3.5" />
-                                </button>
-                            ))}
+                            {Object.entries(filters).filter(([, v]) => v).map(([key, value]) => {
+                                const labelMap: Record<string, string> = {
+                                    category: 'Category',
+                                    event_type: 'Event Type',
+                                    style_preference: 'Style',
+                                    gender: 'Gender',
+                                    min_price: 'Min Price',
+                                    max_price: 'Max Price',
+                                    max_distance: 'Distance',
+                                    size: 'Size',
+                                    availability: 'Availability',
+                                    color: 'Color',
+                                    sort: 'Sort',
+                                    search: 'Search',
+                                }
+                                const label = labelMap[key] || key
+
+                                let displayValue = value
+                                if (key === 'event_type') {
+                                    displayValue = eventTypes.find(e => String(e.id) === value)?.name || value
+                                } else if (key === 'style_preference') {
+                                    displayValue = stylePreferences.find(s => String(s.id) === value)?.name || value
+                                } else if (key === 'category') {
+                                    displayValue = categories.find(c => c.slug === value)?.name || value
+                                } else if (key === 'max_distance') {
+                                    displayValue = `${value} km`
+                                } else if (key === 'min_price' || key === 'max_price') {
+                                    displayValue = `${settings.currency_symbol}${value}`
+                                } else if (key === 'availability') {
+                                    displayValue = 'In Stock'
+                                }
+
+                                return (
+                                    <button key={key} type="button" onClick={() => applyFilter(key, '')} className="inline-flex items-center gap-1 rounded-full bg-gray-100 dark:bg-white/5 px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10">
+                                        {label}: {displayValue}
+                                        <XMarkIcon className="size-3.5" />
+                                    </button>
+                                )
+                            })}
                             <button type="button" onClick={clearFilters} className="text-xs font-medium text-primary-600 hover:text-primary-500">Clear all</button>
                         </div>
                     )}

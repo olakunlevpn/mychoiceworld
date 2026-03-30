@@ -28,7 +28,7 @@ class SearchController extends Controller
             ->active()
             ->fromApprovedVendors()
             ->where('name', 'LIKE', "%{$escaped}%")
-            ->with(['primaryImage:id,product_id,path', 'vendor:id,store_name'])
+            ->with(['primaryImage:id,product_id,url', 'vendor:id,store_name'])
             ->limit(5)
             ->get(['id', 'name', 'slug', 'price', 'vendor_id'])
             ->map(fn (Product $p) => [

@@ -39,7 +39,20 @@ export default function ProductDetail({ product, relatedProducts, wishlisted: in
     const [selectedColor, setSelectedColor] = useState(colors[0]?.name || '')
     const [wishlisted, setWishlisted] = useState(initialWishlisted)
     const [reserveOpen, setReserveOpen] = useState(false)
+    const [lightboxOpen, setLightboxOpen] = useState(false)
+    const [zoomStyle, setZoomStyle] = useState<React.CSSProperties>({})
     const thumbRef = useRef<HTMLDivElement>(null)
+
+    const handleImageHover = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = ((e.clientX - rect.left) / rect.width) * 100
+        const y = ((e.clientY - rect.top) / rect.height) * 100
+        setZoomStyle({ transformOrigin: `${x}% ${y}%`, transform: 'scale(2)' })
+    }
+
+    const handleImageLeave = () => {
+        setZoomStyle({})
+    }
 
     const formatPrice = (cents: number) => `${settings.currency_symbol}${(cents / 100).toFixed(0)}`
 
@@ -71,8 +84,13 @@ export default function ProductDetail({ product, relatedProducts, wishlisted: in
                     {/* Image Gallery */}
                     <div>
                         {activeImage && (
-                            <div className="aspect-[3/4] w-full overflow-hidden rounded-xl bg-white dark:bg-gray-900">
-                                <img src={activeImage.url} alt={activeImage.alt_text || product.name} className="size-full object-cover" />
+                            <div
+                                className="aspect-[3/4] w-full overflow-hidden rounded-xl bg-white dark:bg-gray-900 cursor-zoom-in"
+                                onMouseMove={handleImageHover}
+                                onMouseLeave={handleImageLeave}
+                                onClick={() => setLightboxOpen(true)}
+                            >
+                                <img src={activeImage.url} alt={activeImage.alt_text || product.name} className="size-full object-cover transition-transform duration-200" style={zoomStyle} />
                             </div>
                         )}
                         {product.images.length > 1 && (
@@ -369,6 +387,29 @@ export default function ProductDetail({ product, relatedProducts, wishlisted: in
                     vendor_id: product.vendor?.id,
                 }}
             />
+
+            {/* Fullscreen Lightbox */}
+            {lightboxOpen && activeImage && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm" onClick={() => setLightboxOpen(false)}>
+                    <button type="button" onClick={() => setLightboxOpen(false)} className="absolute right-4 top-4 z-50 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors">
+                        <svg className="size-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+                    </button>
+                    <div className="flex items-center gap-4">
+                        <button type="button" onClick={(e) => { e.stopPropagation(); const idx = product.images.findIndex(i => i.id === activeImage.id); if (idx > 0) setActiveImage(product.images[idx - 1]) }} className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors">
+                            <ChevronLeftIcon className="size-6" />
+                        </button>
+                        <img src={activeImage.url} alt={activeImage.alt_text || product.name} className="max-h-[85vh] max-w-[85vw] object-contain" onClick={(e) => e.stopPropagation()} />
+                        <button type="button" onClick={(e) => { e.stopPropagation(); const idx = product.images.findIndex(i => i.id === activeImage.id); if (idx < product.images.length - 1) setActiveImage(product.images[idx + 1]) }} className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors">
+                            <ChevronRightIcon className="size-6" />
+                        </button>
+                    </div>
+                    <div className="absolute bottom-6 flex gap-2">
+                        {product.images.map((img, i) => (
+                            <button key={img.id} type="button" onClick={(e) => { e.stopPropagation(); setActiveImage(img) }} className={cn('size-2 rounded-full transition-all', activeImage.id === img.id ? 'bg-primary-600 w-6' : 'bg-white/40 hover:bg-white/60')} />
+                        ))}
+                    </div>
+                </div>
+            )}
         </PublicLayout>
     )
 }

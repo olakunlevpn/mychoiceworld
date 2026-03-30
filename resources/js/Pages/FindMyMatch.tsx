@@ -3,9 +3,6 @@ import PublicLayout from '@/Layouts/PublicLayout'
 import { useState, useEffect, useRef } from 'react'
 import {
     CameraIcon, SparklesIcon, ArrowLeftIcon, ArrowRightIcon,
-    HeartIcon, MusicalNoteIcon, BriefcaseIcon, SunIcon,
-    StarIcon as StarOutline, MoonIcon, GlobeAltIcon, FireIcon,
-    SwatchIcon, FilmIcon, StopIcon, PaintBrushIcon,
 } from '@heroicons/react/24/outline'
 import type { EventType, StylePreference, SharedProps } from '@/types'
 
@@ -14,27 +11,40 @@ interface Props {
     stylePreferences: StylePreference[]
 }
 
-const eventIconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
-    wedding: HeartIcon,
-    'date-night': MoonIcon,
-    party: MusicalNoteIcon,
-    'office-work': BriefcaseIcon,
-    'casual-everyday': SunIcon,
-    festival: FireIcon,
-    'funeral-memorial': StarOutline,
-    travel: GlobeAltIcon,
+const eventEmojiMap: Record<string, { emoji: string; description: string }> = {
+    wedding: { emoji: '💍', description: 'Elegant attire for the big day' },
+    'date-night': { emoji: '🌹', description: 'Impress with confidence' },
+    party: { emoji: '🎉', description: 'Stand out on the dance floor' },
+    'office-work': { emoji: '💼', description: 'Professional and polished' },
+    'casual-everyday': { emoji: '☕', description: 'Relaxed everyday looks' },
+    festival: { emoji: '🔥', description: 'Bold and expressive' },
+    'funeral-memorial': { emoji: '🌙', description: 'Respectful and dignified' },
+    travel: { emoji: '🌍', description: 'Comfortable and stylish' },
 }
 
-const styleIconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
-    bohemian: SunIcon,
-    casual: SunIcon,
-    'ethnic-traditional': PaintBrushIcon,
-    formal: StarOutline,
-    minimalist: StopIcon,
-    'modern-contemporary': SparklesIcon,
-    streetwear: FireIcon,
-    'vintage-retro': FilmIcon,
+const styleEmojiMap: Record<string, { emoji: string; description: string }> = {
+    bohemian: { emoji: '🌻', description: 'Free-spirited and flowing' },
+    casual: { emoji: '☀️', description: 'Relaxed everyday looks' },
+    'ethnic-traditional': { emoji: '🪷', description: 'Cultural heritage meets fashion' },
+    formal: { emoji: '🎩', description: 'Black-tie and gala ready' },
+    minimalist: { emoji: '◻️', description: 'Less is more, always' },
+    'modern-contemporary': { emoji: '✨', description: 'Clean lines, fresh silhouettes' },
+    streetwear: { emoji: '🔥', description: 'Urban edge and bold logos' },
+    'vintage-retro': { emoji: '📷', description: 'Retro-inspired charm' },
 }
+
+const skinToneOptions = [
+    { id: 'light', label: 'Light', color: '#FFE0BD' },
+    { id: 'fair', label: 'Fair', color: '#F1C27D' },
+    { id: 'medium', label: 'Medium', color: '#C68642' },
+    { id: 'olive', label: 'Olive', color: '#8D5524' },
+    { id: 'tan', label: 'Tan', color: '#6B3A2A' },
+    { id: 'brown', label: 'Brown', color: '#4A2912' },
+    { id: 'dark', label: 'Dark', color: '#321911' },
+    { id: 'deep', label: 'Deep', color: '#1A0E0A' },
+]
+
+const bodyTypeOptions = ['Slim', 'Average', 'Athletic', 'Curvy', 'Plus Size']
 
 const TOTAL_STEPS = 5
 const stepLabels = ['Occasion', 'Style', 'Budget', 'Photo', 'Matching']
@@ -53,6 +63,9 @@ export default function FindMyMatch({ eventTypes, stylePreferences }: Props) {
     const [selectedStyle, setSelectedStyle] = useState<number | null>(null)
     const [selectedBudget, setSelectedBudget] = useState<string | null>(null)
     const [uploadedPhoto, setUploadedPhoto] = useState<string | null>(null)
+    const [manualMode, setManualMode] = useState(false)
+    const [selectedSkinTone, setSelectedSkinTone] = useState<string | null>(null)
+    const [selectedBodyType, setSelectedBodyType] = useState<string | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const cs = settings.currency_symbol
@@ -121,17 +134,17 @@ export default function FindMyMatch({ eventTypes, stylePreferences }: Props) {
                             <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">What's the occasion?</h1>
                             <p className="mt-3 text-base text-gray-500 dark:text-gray-400">Tell us about your event so we can find the perfect outfit</p>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                            {eventTypes.map((event) => (
-                                <button key={event.id} type="button" onClick={() => setSelectedEvent(event.id)} className={`group rounded-xl border p-5 text-center transition-all duration-200 ${selectedEvent === event.id ? 'border-primary-600 bg-primary-600/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-gray-300 dark:hover:border-gray-600'}`}>
-                                    {(() => { const Icon = eventIconMap[event.slug] || SparklesIcon; return (
-                                        <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-primary-600/10">
-                                            <Icon className="size-6 text-primary-600" />
-                                        </div>
-                                    ) })()}
-                                    <h3 className="mt-3 text-sm font-semibold text-gray-900 dark:text-white">{event.name}</h3>
-                                </button>
-                            ))}
+                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                            {eventTypes.map((event) => {
+                                const meta = eventEmojiMap[event.slug] || { emoji: '✨', description: '' }
+                                return (
+                                    <button key={event.id} type="button" onClick={() => setSelectedEvent(event.id)} className={`group rounded-xl border p-5 text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${selectedEvent === event.id ? 'border-primary-600 bg-primary-600/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-gray-300 dark:hover:border-gray-600'}`}>
+                                        <span className="text-3xl">{meta.emoji}</span>
+                                        <h3 className="mt-3 text-sm font-semibold text-gray-900 dark:text-white">{event.name}</h3>
+                                        {meta.description && <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{meta.description}</p>}
+                                    </button>
+                                )
+                            })}
                         </div>
                     </div>
                 )}
@@ -143,17 +156,17 @@ export default function FindMyMatch({ eventTypes, stylePreferences }: Props) {
                             <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">What's your style?</h1>
                             <p className="mt-3 text-base text-gray-500 dark:text-gray-400">Choose the aesthetic that speaks to you</p>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                            {stylePreferences.map((sp) => (
-                                <button key={sp.id} type="button" onClick={() => setSelectedStyle(sp.id)} className={`group rounded-xl border p-5 text-center transition-all duration-200 ${selectedStyle === sp.id ? 'border-primary-600 bg-primary-600/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-gray-300 dark:hover:border-gray-600'}`}>
-                                    {(() => { const Icon = styleIconMap[sp.slug] || SwatchIcon; return (
-                                        <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-primary-600/10">
-                                            <Icon className="size-6 text-primary-600" />
-                                        </div>
-                                    ) })()}
-                                    <h3 className="mt-3 text-sm font-semibold text-gray-900 dark:text-white">{sp.name}</h3>
-                                </button>
-                            ))}
+                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                            {stylePreferences.map((sp) => {
+                                const meta = styleEmojiMap[sp.slug] || { emoji: '🎨', description: '' }
+                                return (
+                                    <button key={sp.id} type="button" onClick={() => setSelectedStyle(sp.id)} className={`group rounded-xl border p-5 text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${selectedStyle === sp.id ? 'border-primary-600 bg-primary-600/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-gray-300 dark:hover:border-gray-600'}`}>
+                                        <span className="text-3xl">{meta.emoji}</span>
+                                        <h3 className="mt-3 text-sm font-semibold text-gray-900 dark:text-white">{sp.name}</h3>
+                                        {meta.description && <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{meta.description}</p>}
+                                    </button>
+                                )
+                            })}
                         </div>
                     </div>
                 )}
@@ -183,23 +196,62 @@ export default function FindMyMatch({ eventTypes, stylePreferences }: Props) {
                             <p className="mt-3 text-base text-gray-500 dark:text-gray-400">Optional — helps us match colors and styles to you</p>
                         </div>
                         <div className="mx-auto max-w-md">
-                            <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
-                            {uploadedPhoto ? (
-                                <div className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-                                    <img src={uploadedPhoto} alt="Uploaded" className="aspect-square w-full object-cover" />
-                                    <button type="button" onClick={() => { setUploadedPhoto(null); if (fileInputRef.current) fileInputRef.current.value = '' }} className="absolute right-3 top-3 rounded-full bg-dark/80 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm hover:bg-dark">Remove</button>
-                                </div>
+                            {!manualMode ? (
+                                <>
+                                    <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                                    {uploadedPhoto ? (
+                                        <div className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+                                            <img src={uploadedPhoto} alt="Uploaded" className="aspect-square w-full object-cover" />
+                                            <button type="button" onClick={() => { setUploadedPhoto(null); if (fileInputRef.current) fileInputRef.current.value = '' }} className="absolute right-3 top-3 rounded-full bg-dark/80 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm hover:bg-dark">Remove</button>
+                                        </div>
+                                    ) : (
+                                        <button type="button" onClick={() => fileInputRef.current?.click()} className="flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-6 py-16 hover:border-gray-300 dark:hover:border-gray-600">
+                                            <CameraIcon className="size-12 text-gray-500" />
+                                            <span className="mt-4 text-sm font-semibold text-gray-900 dark:text-white">Upload Photo</span>
+                                            <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">JPG, PNG up to 10MB</span>
+                                        </button>
+                                    )}
+                                    <p className="mt-4 text-center text-xs text-gray-500">Your photo is used only for color matching and is not stored</p>
+
+                                    <div className="mt-6 flex flex-col items-center gap-3">
+                                        <button type="button" onClick={() => setManualMode(true)} className="text-sm font-medium text-primary-600 hover:text-primary-500">
+                                            Or select your features manually
+                                        </button>
+                                        <button type="button" onClick={() => setCurrentStep(5)} className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Skip this step</button>
+                                    </div>
+                                </>
                             ) : (
-                                <button type="button" onClick={() => fileInputRef.current?.click()} className="flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-6 py-16 hover:border-gray-300 dark:hover:border-gray-600">
-                                    <CameraIcon className="size-12 text-gray-500" />
-                                    <span className="mt-4 text-sm font-semibold text-gray-900 dark:text-white">Upload Photo</span>
-                                    <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">JPG, PNG up to 10MB</span>
-                                </button>
+                                <>
+                                    <div>
+                                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Select your skin tone</h3>
+                                        <div className="mt-3 flex flex-wrap gap-3">
+                                            {skinToneOptions.map((tone) => (
+                                                <button key={tone.id} type="button" onClick={() => setSelectedSkinTone(tone.id)} className={`flex flex-col items-center gap-1.5 rounded-lg border p-3 transition-all hover:scale-105 ${selectedSkinTone === tone.id ? 'border-primary-600 bg-primary-600/10' : 'border-gray-200 dark:border-gray-700'}`}>
+                                                    <div className="size-10 rounded-full border-2 border-white/20" style={{ backgroundColor: tone.color }} />
+                                                    <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{tone.label}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-6">
+                                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Select your body type</h3>
+                                        <div className="mt-3 flex flex-wrap gap-2">
+                                            {bodyTypeOptions.map((type) => (
+                                                <button key={type} type="button" onClick={() => setSelectedBodyType(type)} className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${selectedBodyType === type ? 'border-primary-600 bg-primary-600/10 text-primary-600' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-gray-400'}`}>
+                                                    {type}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-6 flex items-center gap-3">
+                                        <button type="button" onClick={() => setManualMode(false)} className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                                            Back to photo upload
+                                        </button>
+                                    </div>
+                                </>
                             )}
-                            <p className="mt-4 text-center text-xs text-gray-500">Your photo is used only for color matching and is not stored</p>
-                            <div className="mt-6 text-center">
-                                <button type="button" onClick={() => setCurrentStep(5)} className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Skip this step</button>
-                            </div>
                         </div>
                     </div>
                 )}

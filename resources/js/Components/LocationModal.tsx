@@ -1,14 +1,74 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
 import { MapPinIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useLocation } from '@/contexts/LocationContext'
 
+interface Suggestion {
+    display_name: string
+    lat: string
+    lon: string
+    address?: {
+        suburb?: string
+        city_district?: string
+        city?: string
+        town?: string
+        village?: string
+        state_district?: string
+        county?: string
+        state?: string
+    }
+}
+
 export default function LocationModal() {
     const { city, setCity, isDetecting, detectLocation, isModalOpen, closeModal } = useLocation()
     const [inputValue, setInputValue] = useState(city)
+    const [suggestions, setSuggestions] = useState<Suggestion[]>([])
+    const [showSuggestions, setShowSuggestions] = useState(false)
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-    const handleOpen = () => {
-        setInputValue(city)
+    useEffect(() => {
+        if (isModalOpen) setInputValue(city === 'Set Location' ? '' : city)
+    }, [isModalOpen, city])
+
+    const searchSuggestions = useCallback((query: string) => {
+        if (debounceRef.current) clearTimeout(debounceRef.current)
+        if (query.length < 2) { setSuggestions([]); setShowSuggestions(false); return }
+
+        debounceRef.current = setTimeout(async () => {
+            try {
+                const res = await fetch(
+                    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5&addressdetails=1&countrycodes=in`,
+                    { headers: { 'User-Agent': 'MyChoiceMyWorld/1.0' } },
+                )
+                const data: Suggestion[] = await res.json()
+                setSuggestions(data)
+                setShowSuggestions(data.length > 0)
+            } catch {
+                setSuggestions([])
+            }
+        }, 300)
+    }, [])
+
+    const handleInputChange = (value: string) => {
+        setInputValue(value)
+        searchSuggestions(value)
+    }
+
+    const selectSuggestion = (suggestion: Suggestion) => {
+        const addr = suggestion.address
+        const locality = addr?.suburb || addr?.city_district || addr?.town || addr?.village || addr?.city || ''
+        const district = addr?.state_district || addr?.county || ''
+        const state = addr?.state || ''
+        const displayName = [locality, district, state].filter(Boolean).join(', ') || suggestion.display_name
+
+        setInputValue(displayName)
+        setCity(displayName)
+        setSuggestions([])
+        setShowSuggestions(false)
+
+        const coords = { lat: parseFloat(suggestion.lat), lng: parseFloat(suggestion.lon) }
+        localStorage.setItem('location_coords', JSON.stringify(coords))
+        closeModal()
     }
 
     const handleSave = async () => {
@@ -16,12 +76,12 @@ export default function LocationModal() {
         if (!trimmed) { closeModal(); return }
 
         setCity(trimmed)
+        setShowSuggestions(false)
         closeModal()
 
-        // Forward geocode the city to get coordinates
         try {
             const res = await fetch(
-                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(trimmed)}&format=json&limit=1`,
+                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(trimmed)}&format=json&limit=1&addressdetails=1&countrycodes=in`,
                 { headers: { 'User-Agent': 'MyChoiceMyWorld/1.0' } },
             )
             const data = await res.json()
@@ -34,6 +94,7 @@ export default function LocationModal() {
 
     const handleDetect = () => {
         detectLocation()
+        setShowSuggestions(false)
         closeModal()
     }
 
@@ -66,15 +127,32 @@ export default function LocationModal() {
                         Enter your city to discover boutiques and outfits nearby.
                     </p>
 
-                    <div className="mt-4">
+                    <div className="relative mt-4">
                         <input
                             type="text"
                             value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
+                            onChange={(e) => handleInputChange(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-                            name="city" id="location-city" placeholder="Enter city name"
+                            onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                            name="city" id="location-city" placeholder="Search for area, street name..."
+                            autoComplete="off"
                             className="block w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/5 px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600"
                         />
+                        {showSuggestions && suggestions.length > 0 && (
+                            <div className="absolute left-0 right-0 z-10 mt-1 max-h-60 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg">
+                                {suggestions.map((s, i) => (
+                                    <button
+                                        key={i}
+                                        type="button"
+                                        onClick={() => selectSuggestion(s)}
+                                        className="flex w-full items-start gap-2.5 px-4 py-3 text-left text-sm hover:bg-gray-100 dark:hover:bg-white/5 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0"
+                                    >
+                                        <MapPinIcon className="mt-0.5 size-4 shrink-0 text-primary-600" />
+                                        <span className="text-gray-700 dark:text-gray-300 line-clamp-2">{s.display_name}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     <button

@@ -40,6 +40,9 @@ class BrandingSeeder extends Seeder
             $settings->favicon_path = 'branding/favicon.svg';
             $settings->site_name = 'MyChoiceMyWorld';
             $settings->site_description = 'Discover fashion near you — browse local boutiques, reserve outfits, and try before you buy.';
+            $settings->currency_code = 'INR';
+            $settings->currency_symbol = '₹';
+            $settings->default_country = 'IN';
             $settings->save();
         }
     }

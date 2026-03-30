@@ -72,7 +72,7 @@ class ProductFactory extends Factory
             'description' => fake()->paragraph(2),
             'price' => $price,
             'compare_price' => fake()->boolean(30) ? $price + fake()->numberBetween(1000, 10000) : null,
-            'currency' => 'USD',
+            'currency' => 'INR',
             'gender' => fake()->randomElement(Gender::cases()),
             'primary_color' => $color['name'],
             'primary_color_hex' => $color['hex'],

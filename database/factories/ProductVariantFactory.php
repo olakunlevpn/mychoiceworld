@@ -20,7 +20,7 @@ class ProductVariantFactory extends Factory
      */
     public function definition(): array
     {
-        $sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '36', '38', '40', '42'];
+        $sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
         $colors = [
             ['name' => 'Black', 'hex' => '#000000'],

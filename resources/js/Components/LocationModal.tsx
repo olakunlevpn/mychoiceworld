@@ -30,6 +30,10 @@ export default function LocationModal() {
         if (isModalOpen) setInputValue(city === 'Set Location' ? '' : city)
     }, [isModalOpen, city])
 
+    useEffect(() => {
+        return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+    }, [])
+
     const searchSuggestions = useCallback((query: string) => {
         if (debounceRef.current) clearTimeout(debounceRef.current)
         if (query.length < 2) { setSuggestions([]); setShowSuggestions(false); return }

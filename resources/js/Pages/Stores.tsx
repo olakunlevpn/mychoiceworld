@@ -63,7 +63,7 @@ export default function Stores({ vendors, filters }: Props) {
                                     <h3 className="text-base font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 truncate">{vendor.store_name}</h3>
                                     <p className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
                                         <MapPinIcon className="size-3.5 shrink-0" />
-                                        {(vendor as any).distance_km != null ? `${Number((vendor as any).distance_km).toFixed(1)} km away` : vendor.city}
+                                        {vendor.distance_km != null ? `${Number(vendor.distance_km).toFixed(1)} km away` : vendor.city}
                                     </p>
                                 </div>
                             </div>

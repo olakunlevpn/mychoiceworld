@@ -152,17 +152,16 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
                             </div>
                             <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-6 sm:gap-x-6 lg:grid-cols-4">
                                 {featuredProducts.slice(0, 8).map((product) => {
-                                    const p = product as any
                                     return (
                                         <div key={product.id} className="group">
                                             <div className="relative overflow-hidden rounded-2xl">
                                                 <Link href={`/products/${product.slug}`}>
                                                     <img alt={product.name} src={product.primary_image?.url || '/images/placeholder.jpg'} className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
                                                 </Link>
-                                                {p.distance_km != null && (
+                                                {product.distance_km != null && (
                                                     <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
                                                         <MapPinIcon className="size-3 text-primary-600" />
-                                                        <span className="text-xs font-medium text-white">{Number(p.distance_km).toFixed(1)} km away</span>
+                                                        <span className="text-xs font-medium text-white">{Number(product.distance_km).toFixed(1)} km away</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -172,11 +171,11 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
                                                 </Link>
                                                 <div className="mt-1 flex items-center gap-1">
                                                     {[0, 1, 2, 3, 4].map((i) => (
-                                                        <StarIcon key={i} className={`size-3.5 ${(product.vendor as any)?.rating_avg > i ? 'text-yellow-400' : 'text-gray-600'}`} />
+                                                        <StarIcon key={i} className={`size-3.5 ${(product.vendor?.rating_avg ?? 0) > i ? 'text-yellow-400' : 'text-gray-600'}`} />
                                                     ))}
                                                 </div>
                                                 <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{product.vendor?.store_name}</p>
-                                                {p.distance_km != null && <p className="text-xs text-gray-400">{Number(p.distance_km).toFixed(1)} km away</p>}
+                                                {product.distance_km != null && <p className="text-xs text-gray-400">{Number(product.distance_km).toFixed(1)} km away</p>}
                                                 <Link href={`/products/${product.slug}`} className="mt-2 block w-full rounded-md bg-primary-600 py-2 text-center text-sm font-semibold text-white hover:bg-primary-700">
                                                     Reserve
                                                 </Link>
@@ -232,7 +231,7 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
                                             <div className="mt-2 flex items-center justify-between text-xs text-white/70">
                                                 <span className="flex items-center gap-1">
                                                     <MapPinIcon className="size-3" />
-                                                    {(vendor as any).distance_km != null ? `${Number((vendor as any).distance_km).toFixed(1)} km away` : vendor.city}
+                                                    {vendor.distance_km != null ? `${Number(vendor.distance_km).toFixed(1)} km away` : vendor.city}
                                                 </span>
                                                 <span>{vendor.products_count} Products</span>
                                             </div>

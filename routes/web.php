@@ -38,7 +38,7 @@ Route::get('/products/{product:slug}', [ProductBrowseController::class, 'show'])
 Route::get('/stores', [StoreBrowseController::class, 'index'])->name('stores.index');
 Route::get('/stores/{vendor:slug}', [StoreBrowseController::class, 'show'])->name('stores.show');
 Route::get('/search', SearchController::class)->name('search');
-Route::get('/search/suggest', [SearchController::class, 'suggest'])->name('search.suggest');
+Route::get('/search/suggest', [SearchController::class, 'suggest'])->middleware('throttle:60,1')->name('search.suggest');
 
 // CMS pages (dynamic — replaces hardcoded about/privacy/terms/cookies)
 Route::get('/page/{page:slug}', function (Page $page) {
@@ -71,7 +71,7 @@ Route::post('/newsletter/subscribe', function (Request $request) {
     NewsletterSubscriber::create(['email' => $request->input('email')]);
 
     Mail::to($request->input('email'))
-        ->queue(new NewsletterWelcome($request->input('email')));
+        ->send(new NewsletterWelcome($request->input('email')));
 
     return back()->with('success', 'You\'ve been subscribed to our newsletter.');
 })->name('newsletter.subscribe');

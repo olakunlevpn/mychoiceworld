@@ -2,7 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react'
 import PublicLayout from '@/Layouts/PublicLayout'
 import { MagnifyingGlassIcon, BuildingStorefrontIcon } from '@heroicons/react/24/outline'
 import { StarIcon } from '@heroicons/react/24/solid'
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import type { Product, ProductImage, Vendor, SharedProps } from '@/types'
 
 interface Suggestion {
@@ -27,6 +27,10 @@ export default function SearchResults({ query, products, vendors }: Props) {
     const [suggestions, setSuggestions] = useState<Suggestion[]>([])
     const [showSuggestions, setShowSuggestions] = useState(false)
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    useEffect(() => {
+        return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+    }, [])
 
     const fetchSuggestions = useCallback((value: string) => {
         if (debounceRef.current) clearTimeout(debounceRef.current)

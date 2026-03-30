@@ -26,15 +26,16 @@ class HomeController extends Controller
             ->featured()
             ->fromApprovedVendors()
             ->with(['primaryImage', 'vendor:id,store_name,slug,city'])
-            ->when($hasCoords, function ($q) use ($lat, $lng) {
+            ->when($hasCoords, function ($q) use ($lat, $lng, $radiusKm) {
                 $q->addSelect(['products.*'])
                     ->selectRaw(
                         'ST_Distance_Sphere(
-                            (SELECT location FROM vendors WHERE vendors.id = products.vendor_id),
+                            IFNULL((SELECT location FROM vendors WHERE vendors.id = products.vendor_id), ST_GeomFromText(?)),
                             ST_GeomFromText(?)
                         ) / 1000 as distance_km',
-                        ["POINT({$lng} {$lat})"],
+                        ["POINT({$lng} {$lat})", "POINT({$lng} {$lat})"],
                     )
+                    ->havingRaw('distance_km <= ?', [$radiusKm])
                     ->orderBy('distance_km');
             }, fn ($q) => $q->latest())
             ->limit(12)
@@ -44,11 +45,13 @@ class HomeController extends Controller
             ->approved()
             ->featured()
             ->select(['id', 'store_name', 'slug', 'logo', 'city', 'rating_avg', 'rating_count'])
-            ->when($hasCoords, function ($q) use ($lat, $lng) {
+            ->when($hasCoords, function ($q) use ($lat, $lng, $radiusKm) {
                 $q->selectRaw(
-                    'ST_Distance_Sphere(location, ST_GeomFromText(?)) / 1000 as distance_km',
-                    ["POINT({$lng} {$lat})"],
-                )->orderBy('distance_km');
+                    'ST_Distance_Sphere(IFNULL(location, ST_GeomFromText(?)), ST_GeomFromText(?)) / 1000 as distance_km',
+                    ["POINT({$lng} {$lat})", "POINT({$lng} {$lat})"],
+                )
+                    ->havingRaw('distance_km <= ?', [$radiusKm])
+                    ->orderBy('distance_km');
             }, fn ($q) => $q->latest())
             ->withCount(['products' => fn ($q) => $q->active()])
             ->limit(8)

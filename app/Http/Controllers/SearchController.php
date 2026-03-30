@@ -22,10 +22,12 @@ class SearchController extends Controller
             return response()->json([]);
         }
 
+        $escaped = str_replace(['%', '_'], ['\\%', '\\_'], $query);
+
         $products = Product::query()
             ->active()
             ->fromApprovedVendors()
-            ->where('name', 'LIKE', "%{$query}%")
+            ->where('name', 'LIKE', "%{$escaped}%")
             ->with(['primaryImage:id,product_id,path', 'vendor:id,store_name'])
             ->limit(5)
             ->get(['id', 'name', 'slug', 'price', 'vendor_id'])
@@ -41,7 +43,7 @@ class SearchController extends Controller
 
         $vendors = Vendor::query()
             ->approved()
-            ->where('store_name', 'LIKE', "%{$query}%")
+            ->where('store_name', 'LIKE', "%{$escaped}%")
             ->limit(3)
             ->get(['id', 'store_name', 'slug', 'logo', 'city'])
             ->map(fn (Vendor $v) => [

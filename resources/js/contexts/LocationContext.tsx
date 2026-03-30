@@ -86,8 +86,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
                 updateLocation(name, coords)
                 setIsDetecting(false)
             },
-            (error) => {
-                console.warn('Geolocation error:', error.message)
+            () => {
                 setIsDetecting(false)
             },
             { timeout: 10000, enableHighAccuracy: false, maximumAge: 300000 },

@@ -312,10 +312,10 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
                                                             loading="lazy"
                                                         />
                                                     </Link>
-                                                    {(product as any).distance_km != null && (
+                                                    {product.distance_km != null && (
                                                         <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
                                                             <MapPinIcon className="size-3 text-primary-600" />
-                                                            <span className="text-xs font-medium text-white">{((product as any).distance_km as number).toFixed(1)} km away</span>
+                                                            <span className="text-xs font-medium text-white">{product.distance_km!.toFixed(1)} km away</span>
                                                         </div>
                                                     )}
                                                     <button type="button" onClick={() => toggleWishlist(product.id)} className="absolute right-2 top-2 rounded-full bg-dark/60 p-1.5 backdrop-blur-sm transition-colors hover:bg-dark/80">

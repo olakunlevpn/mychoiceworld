@@ -46,6 +46,7 @@ export interface Vendor {
     rating_count: number;
     approved_at?: string;
     products_count?: number;
+    distance_km?: number;
     created_at: string;
 }
 
@@ -101,6 +102,7 @@ export interface Product {
     views_count: number;
     reservations_count: number;
     created_at: string;
+    distance_km?: number;
     // Relations
     vendor?: Vendor;
     category?: Category;

@@ -8,29 +8,50 @@ use App\Models\HeroSlide;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Vendor;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class HomeController extends Controller
 {
-    public function __invoke(): Response
+    public function __invoke(Request $request): Response
     {
+        $lat = $request->float('lat');
+        $lng = $request->float('lng');
+        $hasCoords = $lat && $lng;
+        $radiusKm = $request->float('radius', 5);
+
         $featuredProducts = Product::query()
             ->active()
             ->featured()
             ->fromApprovedVendors()
             ->with(['primaryImage', 'vendor:id,store_name,slug,city'])
+            ->when($hasCoords, function ($q) use ($lat, $lng) {
+                $q->addSelect(['products.*'])
+                    ->selectRaw(
+                        'ST_Distance_Sphere(
+                            (SELECT location FROM vendors WHERE vendors.id = products.vendor_id),
+                            ST_GeomFromText(?)
+                        ) / 1000 as distance_km',
+                        ["POINT({$lng} {$lat})"],
+                    )
+                    ->orderBy('distance_km');
+            }, fn ($q) => $q->latest())
             ->limit(12)
-            ->latest()
             ->get();
 
         $featuredVendors = Vendor::query()
             ->approved()
             ->featured()
             ->select(['id', 'store_name', 'slug', 'logo', 'city', 'rating_avg', 'rating_count'])
+            ->when($hasCoords, function ($q) use ($lat, $lng) {
+                $q->selectRaw(
+                    'ST_Distance_Sphere(location, ST_GeomFromText(?)) / 1000 as distance_km',
+                    ["POINT({$lng} {$lat})"],
+                )->orderBy('distance_km');
+            }, fn ($q) => $q->latest())
             ->withCount(['products' => fn ($q) => $q->active()])
             ->limit(8)
-            ->latest()
             ->get();
 
         $eventTypes = EventType::query()

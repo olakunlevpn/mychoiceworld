@@ -82,17 +82,37 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
         { id: 'gender', name: 'Gender', options: genders.map(g => ({ value: g.value, label: g.label })) },
     ]
 
+    const sizeOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+
     const FilterContent = () => (
         <div className="space-y-6">
-            {/* Price Range */}
+            {/* Distance Slider */}
             <div>
+                <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Nearest</h3>
+                    <span className="text-sm font-medium text-primary-600">{filters.max_distance || '25'} km</span>
+                </div>
+                <input
+                    type="range"
+                    min="1" max="100" step="1"
+                    defaultValue={filters.max_distance || '25'}
+                    onChange={(e) => applyFilter('max_distance', e.target.value)}
+                    className="mt-2 w-full accent-primary-600"
+                />
+                <div className="mt-1 flex justify-between text-xs text-gray-400">
+                    <span>1 km</span><span>100 km</span>
+                </div>
+            </div>
+
+            {/* Price Range */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Price Range</h3>
                 <div className="mt-3 flex items-center gap-3">
                     <input
                         type="number"
                         name="min_price" id="filter-min-price" defaultValue={filters.min_price || ''}
                         onBlur={(e) => applyFilter('min_price', e.target.value)}
-                        placeholder="Min"
+                        placeholder="0"
                         className="w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/5 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600"
                     />
                     <span className="text-gray-400">—</span>
@@ -100,7 +120,7 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
                         type="number"
                         name="max_price" id="filter-max-price" defaultValue={filters.max_price || ''}
                         onBlur={(e) => applyFilter('max_price', e.target.value)}
-                        placeholder="Max"
+                        placeholder="1000"
                         className="w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/5 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600"
                     />
                 </div>
@@ -132,6 +152,31 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
                     )}
                 </Disclosure>
             ))}
+
+            {/* Size */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Size</h3>
+                <div className="flex flex-wrap gap-2">
+                    {sizeOptions.map((size) => (
+                        <button key={size} type="button" onClick={() => applyFilter('size', filters.size === size ? '' : size)} className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-all ${filters.size === size ? 'border-primary-600 bg-primary-600/10 text-primary-600' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-gray-400'}`}>
+                            {size}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Availability */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <label className="flex cursor-pointer items-center gap-3">
+                    <input
+                        type="checkbox"
+                        checked={filters.availability === 'in_stock'}
+                        onChange={(e) => applyFilter('availability', e.target.checked ? 'in_stock' : '')}
+                        className="size-4 rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-600"
+                    />
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">In Stock Only</span>
+                </label>
+            </div>
 
             {activeFilterCount > 0 && (
                 <button type="button" onClick={clearFilters} className="w-full rounded-md border border-gray-200 dark:border-gray-700 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5">

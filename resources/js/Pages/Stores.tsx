@@ -1,7 +1,8 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import PublicLayout from '@/Layouts/PublicLayout'
+import { useLocation } from '@/contexts/LocationContext'
 import { StarIcon } from '@heroicons/react/24/solid'
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { MagnifyingGlassIcon, MapPinIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
 import type { Vendor, PaginatedResponse, SharedProps } from '@/types'
 
@@ -11,11 +12,14 @@ interface Props {
 }
 
 export default function Stores({ vendors, filters }: Props) {
+    const { coordinates } = useLocation()
     const [search, setSearch] = useState(filters.search || '')
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault()
-        router.get('/stores', { ...filters, search }, { preserveState: true })
+        const params: Record<string, string> = { ...filters, search }
+        if (coordinates) { params.lat = String(coordinates.lat); params.lng = String(coordinates.lng) }
+        router.get('/stores', params, { preserveState: true })
     }
 
     return (
@@ -57,7 +61,10 @@ export default function Stores({ vendors, filters }: Props) {
                                 )}
                                 <div className="min-w-0 flex-1">
                                     <h3 className="text-base font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 truncate">{vendor.store_name}</h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">{vendor.city}</p>
+                                    <p className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                                        <MapPinIcon className="size-3.5 shrink-0" />
+                                        {(vendor as any).distance_km != null ? `${Number((vendor as any).distance_km).toFixed(1)} km away` : vendor.city}
+                                    </p>
                                 </div>
                             </div>
                             {vendor.description && (

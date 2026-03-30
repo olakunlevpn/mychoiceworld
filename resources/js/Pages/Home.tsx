@@ -1,7 +1,9 @@
-import { Head, Link, usePage } from '@inertiajs/react'
+import { Head, Link, router, usePage } from '@inertiajs/react'
 import PublicLayout from '@/Layouts/PublicLayout'
 import { useLocation } from '@/contexts/LocationContext'
 import { useState, useEffect, useCallback } from 'react'
+import { StarIcon } from '@heroicons/react/24/solid'
+import { MapPinIcon } from '@heroicons/react/24/outline'
 import type { Product, Vendor, EventType, Category, Review, SharedProps } from '@/types'
 
 interface HeroSlideData {
@@ -39,7 +41,7 @@ const howItWorks = [
 
 export default function Home({ heroSlides, featuredProducts, featuredVendors, eventTypes, categories, recentReviews }: Props) {
     const { settings } = usePage().props as unknown as SharedProps
-    const { city, openModal } = useLocation()
+    const { city, coordinates, openModal } = useLocation()
     const [currentSlide, setCurrentSlide] = useState(0)
     const [reviewPage, setReviewPage] = useState(0)
     const reviewsPerPage = 3
@@ -135,27 +137,53 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
                         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                                 <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Trending Near You</h2>
-                                <div className="flex items-center gap-x-1.5 text-sm text-gray-500 dark:text-gray-400">
-                                    <svg className="size-4 text-primary-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>
-                                    <span>Near: <strong className="text-gray-900 dark:text-white">{city}</strong></span>
+                                <div className="flex items-center gap-x-3 text-sm text-gray-500 dark:text-gray-400">
+                                    <MapPinIcon className="size-4 text-primary-600" />
+                                    <span>Showing outfits near <strong className="text-primary-600">{city}</strong></span>
                                     <button type="button" onClick={openModal} className="font-medium text-primary-600 hover:text-primary-500">Change</button>
+                                    <div className="flex gap-1 ml-2">
+                                        {[2, 5, 10].map((km) => (
+                                            <button key={km} type="button" onClick={() => { if (coordinates) router.reload({ data: { lat: coordinates.lat, lng: coordinates.lng, radius: km } }) }} className="rounded-md px-3 py-1 text-xs font-semibold transition-colors bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-white hover:bg-primary-600 hover:text-white">
+                                                {km} km
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                             <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-6 sm:gap-x-6 lg:grid-cols-4">
-                                {featuredProducts.slice(0, 8).map((product) => (
-                                    <Link key={product.id} href={`/products/${product.slug}`} className="group overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/5">
-                                        <div className="relative overflow-hidden">
-                                            <img alt={product.name} src={product.primary_image?.url || '/images/placeholder.jpg'} className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+                                {featuredProducts.slice(0, 8).map((product) => {
+                                    const p = product as any
+                                    return (
+                                        <div key={product.id} className="group">
+                                            <div className="relative overflow-hidden rounded-2xl">
+                                                <Link href={`/products/${product.slug}`}>
+                                                    <img alt={product.name} src={product.primary_image?.url || '/images/placeholder.jpg'} className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+                                                </Link>
+                                                {p.distance_km != null && (
+                                                    <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
+                                                        <MapPinIcon className="size-3 text-primary-600" />
+                                                        <span className="text-xs font-medium text-white">{Number(p.distance_km).toFixed(1)} km away</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="mt-3">
+                                                <Link href={`/products/${product.slug}`}>
+                                                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate group-hover:text-primary-600 transition-colors">{product.name}</h3>
+                                                </Link>
+                                                <div className="mt-1 flex items-center gap-1">
+                                                    {[0, 1, 2, 3, 4].map((i) => (
+                                                        <StarIcon key={i} className={`size-3.5 ${(product.vendor as any)?.rating_avg > i ? 'text-yellow-400' : 'text-gray-600'}`} />
+                                                    ))}
+                                                </div>
+                                                <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{product.vendor?.store_name}</p>
+                                                {p.distance_km != null && <p className="text-xs text-gray-400">{Number(p.distance_km).toFixed(1)} km away</p>}
+                                                <Link href={`/products/${product.slug}`} className="mt-2 block w-full rounded-md bg-primary-600 py-2 text-center text-sm font-semibold text-white hover:bg-primary-700">
+                                                    Reserve
+                                                </Link>
+                                            </div>
                                         </div>
-                                        <div className="p-4">
-                                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">{product.name}</h3>
-                                            <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{product.vendor?.store_name}</p>
-                                            <Link href={`/products/${product.slug}`} className="mt-3 block w-full rounded-md bg-primary-600 py-2 text-center text-sm font-semibold text-white hover:bg-primary-700">
-                                                Reserve
-                                            </Link>
-                                        </div>
-                                    </Link>
-                                ))}
+                                    )
+                                })}
                             </div>
                         </div>
                     </section>
@@ -202,7 +230,10 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
                                                 <span className="ml-1 text-xs text-white/80">{vendor.rating_avg}</span>
                                             </div>
                                             <div className="mt-2 flex items-center justify-between text-xs text-white/70">
-                                                <span>{vendor.city}</span>
+                                                <span className="flex items-center gap-1">
+                                                    <MapPinIcon className="size-3" />
+                                                    {(vendor as any).distance_km != null ? `${Number((vendor as any).distance_km).toFixed(1)} km away` : vendor.city}
+                                                </span>
                                                 <span>{vendor.products_count} Products</span>
                                             </div>
                                             <Link href={`/stores/${vendor.slug}`} className="mt-3 block w-full rounded-md bg-primary-600 py-2 text-center text-sm font-semibold text-white hover:bg-primary-700 transition-colors">

@@ -14,9 +14,19 @@ class StoreBrowseController extends Controller
 
     public function index(Request $request): Response
     {
+        $lat = $request->float('lat');
+        $lng = $request->float('lng');
+        $hasCoords = $lat && $lng;
+
         $vendors = Vendor::query()
             ->approved()
             ->select(['id', 'store_name', 'slug', 'logo', 'city', 'description', 'rating_avg', 'rating_count'])
+            ->when($hasCoords, function ($q) use ($lat, $lng) {
+                $q->selectRaw(
+                    'ST_Distance_Sphere(location, ST_GeomFromText(?)) / 1000 as distance_km',
+                    ["POINT({$lng} {$lat})"],
+                );
+            })
             ->withCount(['products' => fn ($q) => $q->active()])
             ->when($request->input('search'), function ($q, $search) {
                 $ids = $this->searchIds(Vendor::class, $search);

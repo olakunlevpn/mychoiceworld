@@ -18,6 +18,7 @@ use App\Http\Controllers\Vendor\ProductController;
 use App\Http\Controllers\Vendor\ReservationController;
 use App\Http\Controllers\Vendor\ReviewController;
 use App\Http\Controllers\Vendor\StoreProfileController;
+use App\Mail\NewsletterWelcome;
 use App\Models\ContactMessage;
 use App\Models\EventType;
 use App\Models\Faq;
@@ -27,6 +28,7 @@ use App\Models\NewsletterSubscriber;
 use App\Models\Page;
 use App\Models\StylePreference;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -66,6 +68,9 @@ Route::post('/contact', function (Request $request) {
 Route::post('/newsletter/subscribe', function (Request $request) {
     $request->validate(['email' => 'required|email|unique:newsletter_subscribers,email']);
     NewsletterSubscriber::create(['email' => $request->input('email')]);
+
+    Mail::to($request->input('email'))
+        ->queue(new NewsletterWelcome($request->input('email')));
 
     return back()->with('success', 'You\'ve been subscribed to our newsletter.');
 })->name('newsletter.subscribe');

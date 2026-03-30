@@ -52,6 +52,13 @@ class ProductBrowseController extends Controller
             ->when($request->input('max_price'), fn ($q, $max) => $q->where('price', '<=', (int) ($max * 100)))
             ->when($request->input('event_type'), fn ($q, $id) => $q->whereHas('eventTypes', fn ($eq) => $eq->where('event_types.id', $id)))
             ->when($request->input('style_preference'), fn ($q, $id) => $q->whereHas('stylePreferences', fn ($sq) => $sq->where('style_preferences.id', $id)))
+            ->when($request->input('max_distance') && $hasCoords, function ($q) use ($request) {
+                $maxKm = (int) $request->input('max_distance');
+                $q->havingRaw('distance_km <= ?', [$maxKm]);
+            })
+            ->when($request->input('size'), fn ($q, $size) => $q->whereHas('variants', fn ($vq) => $vq->where('size', $size)->where('is_active', true)))
+            ->when($request->input('availability') === 'in_stock', fn ($q) => $q->whereHas('variants', fn ($vq) => $vq->where('stock_quantity', '>', 0)->where('is_active', true)))
+            ->when($request->input('color'), fn ($q, $color) => $q->whereHas('variants', fn ($vq) => $vq->where('color', $color)->where('is_active', true)))
             ->when($request->input('sort'), function ($q, $sort) use ($hasCoords) {
                 return match ($sort) {
                     'price_asc' => $q->orderBy('price', 'asc'),
@@ -88,7 +95,7 @@ class ProductBrowseController extends Controller
                 'value' => $g->value,
                 'label' => $g->getLabel(),
             ]),
-            'filters' => $request->only(['search', 'category', 'gender', 'min_price', 'max_price', 'event_type', 'style_preference', 'sort']),
+            'filters' => $request->only(['search', 'category', 'gender', 'min_price', 'max_price', 'event_type', 'style_preference', 'sort', 'max_distance', 'size', 'availability', 'color']),
         ]);
     }
 

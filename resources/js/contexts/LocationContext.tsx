@@ -56,16 +56,19 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     const reverseGeocode = useCallback(async (lat: number, lng: number): Promise<string> => {
         try {
             const res = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10`,
+                `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=18&addressdetails=1`,
                 { headers: { 'User-Agent': 'MyChoiceMyWorld/1.0' } },
             )
             const data = await res.json()
-            return data.address?.city ||
-                data.address?.town ||
-                data.address?.village ||
-                data.address?.county ||
-                data.address?.state ||
-                'Unknown'
+            const addr = data.address
+            if (!addr) return 'Unknown'
+
+            const locality = addr.suburb || addr.neighbourhood || addr.city_district || addr.town || addr.village || addr.city || ''
+            const district = addr.state_district || addr.county || ''
+            const state = addr.state || ''
+
+            const parts = [locality, district, state].filter(Boolean)
+            return parts.length > 0 ? parts.join(', ') : 'Unknown'
         } catch {
             return 'Unknown'
         }

@@ -257,8 +257,8 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
                                 <>
                                     <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                                         {products.data.map((product) => (
-                                            <div key={product.id} className="group relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/5 transition-shadow hover:shadow-lg">
-                                                <div className="relative overflow-hidden">
+                                            <div key={product.id} className="group relative">
+                                                <div className="relative overflow-hidden rounded-2xl">
                                                     <Link href={`/products/${product.slug}`}>
                                                         <img
                                                             src={product.primary_image?.url || '/images/placeholder.jpg'}
@@ -270,7 +270,7 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
                                                     {(product as any).distance_km != null && (
                                                         <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
                                                             <MapPinIcon className="size-3 text-primary-600" />
-                                                            <span className="text-xs font-medium text-white">{((product as any).distance_km as number).toFixed(1)} km</span>
+                                                            <span className="text-xs font-medium text-white">{((product as any).distance_km as number).toFixed(1)} km away</span>
                                                         </div>
                                                     )}
                                                     <button type="button" onClick={() => toggleWishlist(product.id)} className="absolute right-2 top-2 rounded-full bg-dark/60 p-1.5 backdrop-blur-sm transition-colors hover:bg-dark/80">
@@ -278,16 +278,16 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
                                                     </button>
                                                     <div className="absolute inset-x-2 bottom-2 translate-y-2 opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
                                                         <Link href={`/products/${product.slug}`} className="block w-full rounded-md bg-primary-600 px-3 py-2 text-center text-xs font-semibold text-white shadow-lg hover:bg-primary-700">
-                                                            View Details
+                                                            Reserve
                                                         </Link>
                                                     </div>
                                                 </div>
-                                                <div className="p-3">
+                                                <div className="mt-3">
                                                     <Link href={`/products/${product.slug}`}>
                                                         <h3 className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 transition-colors truncate">{product.name}</h3>
                                                     </Link>
                                                     <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{product.vendor?.store_name}</p>
-                                                    <p className="mt-1 text-sm font-bold text-gray-900 dark:text-white">{settings.currency_symbol}{(product.price / 100).toFixed(0)}</p>
+                                                    <p className="mt-1 text-sm font-bold text-primary-600">{settings.currency_symbol}{(product.price / 100).toFixed(0)}</p>
                                                 </div>
                                             </div>
                                         ))}

@@ -1,9 +1,9 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import PublicLayout from '@/Layouts/PublicLayout'
 import ReservationModal from '@/Components/ReservationModal'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
-import { MapPinIcon, HeartIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { MapPinIcon, HeartIcon, ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { StarIcon, HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
 import DOMPurify from 'dompurify'
 import type { Product, ProductImage, ProductVariant, ProductColor, SharedProps } from '@/types'
@@ -39,6 +39,7 @@ export default function ProductDetail({ product, relatedProducts, wishlisted: in
     const [selectedColor, setSelectedColor] = useState(colors[0]?.name || '')
     const [wishlisted, setWishlisted] = useState(initialWishlisted)
     const [reserveOpen, setReserveOpen] = useState(false)
+    const thumbRef = useRef<HTMLDivElement>(null)
 
     const formatPrice = (cents: number) => `${settings.currency_symbol}${(cents / 100).toFixed(0)}`
 
@@ -75,20 +76,32 @@ export default function ProductDetail({ product, relatedProducts, wishlisted: in
                             </div>
                         )}
                         {product.images.length > 1 && (
-                            <div className="mt-4 grid grid-cols-4 gap-3">
-                                {product.images.map((image) => (
-                                    <button
-                                        key={image.id}
-                                        type="button"
-                                        onClick={() => setActiveImage(image)}
-                                        className={cn(
-                                            'aspect-[3/4] overflow-hidden rounded-lg border-2 transition-all',
-                                            activeImage?.id === image.id ? 'border-primary-600' : 'border-transparent hover:border-gray-600'
-                                        )}
-                                    >
-                                        <img src={image.thumbnail_url || image.url} alt={image.alt_text || ''} className="size-full object-cover" />
-                                    </button>
-                                ))}
+                            <div className="relative mt-4">
+                                {product.images.length > 4 && (
+                                    <>
+                                        <button type="button" onClick={() => thumbRef.current?.scrollBy({ left: -200, behavior: 'smooth' })} className="absolute -left-3 top-1/2 z-10 -translate-y-1/2 flex size-8 items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                            <ChevronLeftIcon className="size-4 text-gray-700 dark:text-white" />
+                                        </button>
+                                        <button type="button" onClick={() => thumbRef.current?.scrollBy({ left: 200, behavior: 'smooth' })} className="absolute -right-3 top-1/2 z-10 -translate-y-1/2 flex size-8 items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                            <ChevronRightIcon className="size-4 text-gray-700 dark:text-white" />
+                                        </button>
+                                    </>
+                                )}
+                                <div ref={thumbRef} className="flex gap-3 overflow-x-auto scrollbar-hide">
+                                    {product.images.map((image) => (
+                                        <button
+                                            key={image.id}
+                                            type="button"
+                                            onClick={() => setActiveImage(image)}
+                                            className={cn(
+                                                'aspect-[3/4] w-[calc(25%-9px)] shrink-0 overflow-hidden rounded-lg border-2 transition-all',
+                                                activeImage?.id === image.id ? 'border-primary-600' : 'border-transparent hover:border-gray-600'
+                                            )}
+                                        >
+                                            <img src={image.thumbnail_url || image.url} alt={image.alt_text || ''} className="size-full object-cover" />
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>

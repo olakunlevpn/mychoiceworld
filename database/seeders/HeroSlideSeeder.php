@@ -15,21 +15,21 @@ class HeroSlideSeeder extends Seeder
                 'description' => 'Browse thousands of curated fashion pieces from local boutiques near you.',
                 'cta_text' => 'Explore Now',
                 'cta_link' => '/products',
-                'background_image' => '/images/hero-1.jpg',
+                'background_image' => '/images/hero-slider-1.jpg',
             ],
             [
                 'heading' => 'Shop Local, Look Global',
                 'description' => 'Support independent fashion vendors and find unique pieces you won\'t see anywhere else.',
                 'cta_text' => 'Find Stores',
                 'cta_link' => '/stores',
-                'background_image' => '/images/hero-2.jpg',
+                'background_image' => '/images/hero-slider-2.jpg',
             ],
             [
                 'heading' => 'AI-Powered Style Matching',
                 'description' => 'Let our smart matching engine find outfits that complement your skin tone and style.',
                 'cta_text' => 'Try AI Match',
                 'cta_link' => '/find-my-match',
-                'background_image' => '/images/hero-3.jpg',
+                'background_image' => '/images/hero-slider-3.jpg',
             ],
         ];
 

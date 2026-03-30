@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Concerns\SearchableWithFallback;
 use App\Models\Product;
 use App\Models\Vendor;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -12,6 +13,49 @@ use Inertia\Response;
 class SearchController extends Controller
 {
     use SearchableWithFallback;
+
+    public function suggest(Request $request): JsonResponse
+    {
+        $query = $request->input('q', '');
+
+        if (strlen($query) < 2) {
+            return response()->json([]);
+        }
+
+        $products = Product::query()
+            ->active()
+            ->fromApprovedVendors()
+            ->where('name', 'LIKE', "%{$query}%")
+            ->with(['primaryImage:id,product_id,path', 'vendor:id,store_name'])
+            ->limit(5)
+            ->get(['id', 'name', 'slug', 'price', 'vendor_id'])
+            ->map(fn (Product $p) => [
+                'type' => 'product',
+                'id' => $p->id,
+                'name' => $p->name,
+                'slug' => $p->slug,
+                'url' => "/products/{$p->slug}",
+                'image' => $p->primaryImage?->url,
+                'subtitle' => $p->vendor?->store_name,
+            ]);
+
+        $vendors = Vendor::query()
+            ->approved()
+            ->where('store_name', 'LIKE', "%{$query}%")
+            ->limit(3)
+            ->get(['id', 'store_name', 'slug', 'logo', 'city'])
+            ->map(fn (Vendor $v) => [
+                'type' => 'store',
+                'id' => $v->id,
+                'name' => $v->store_name,
+                'slug' => $v->slug,
+                'url' => "/stores/{$v->slug}",
+                'image' => $v->logo,
+                'subtitle' => $v->city,
+            ]);
+
+        return response()->json($products->concat($vendors)->values());
+    }
 
     public function __invoke(Request $request): Response
     {

@@ -38,6 +38,7 @@ Route::get('/products/{product:slug}', [ProductBrowseController::class, 'show'])
 Route::get('/stores', [StoreBrowseController::class, 'index'])->name('stores.index');
 Route::get('/stores/{vendor:slug}', [StoreBrowseController::class, 'show'])->name('stores.show');
 Route::get('/search', SearchController::class)->name('search');
+Route::get('/search/suggest', [SearchController::class, 'suggest'])->name('search.suggest');
 
 // CMS pages (dynamic — replaces hardcoded about/privacy/terms/cookies)
 Route::get('/page/{page:slug}', function (Page $page) {

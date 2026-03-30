@@ -1,9 +1,19 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import PublicLayout from '@/Layouts/PublicLayout'
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { MagnifyingGlassIcon, BuildingStorefrontIcon } from '@heroicons/react/24/outline'
 import { StarIcon } from '@heroicons/react/24/solid'
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import type { Product, ProductImage, Vendor, SharedProps } from '@/types'
+
+interface Suggestion {
+    type: 'product' | 'store'
+    id: number
+    name: string
+    slug: string
+    url: string
+    image?: string
+    subtitle?: string
+}
 
 interface Props {
     query: string
@@ -14,9 +24,34 @@ interface Props {
 export default function SearchResults({ query, products, vendors }: Props) {
     const { settings } = usePage().props as unknown as SharedProps
     const [search, setSearch] = useState(query)
+    const [suggestions, setSuggestions] = useState<Suggestion[]>([])
+    const [showSuggestions, setShowSuggestions] = useState(false)
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    const fetchSuggestions = useCallback((value: string) => {
+        if (debounceRef.current) clearTimeout(debounceRef.current)
+        if (value.length < 2) { setSuggestions([]); setShowSuggestions(false); return }
+
+        debounceRef.current = setTimeout(async () => {
+            try {
+                const res = await fetch(`/search/suggest?q=${encodeURIComponent(value)}`)
+                const data: Suggestion[] = await res.json()
+                setSuggestions(data)
+                setShowSuggestions(data.length > 0)
+            } catch {
+                setSuggestions([])
+            }
+        }, 250)
+    }, [])
+
+    const handleInputChange = (value: string) => {
+        setSearch(value)
+        fetchSuggestions(value)
+    }
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault()
+        setShowSuggestions(false)
         router.get('/search', { q: search })
     }
 
@@ -34,7 +69,49 @@ export default function SearchResults({ query, products, vendors }: Props) {
                 <form onSubmit={handleSearch} className="flex gap-3">
                     <div className="relative flex-1">
                         <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-gray-400" />
-                        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search products, stores..." autoFocus className="block w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/5 py-3 pl-10 pr-4 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600" />
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => handleInputChange(e.target.value)}
+                            onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                            placeholder="Search products, stores..."
+                            autoFocus
+                            autoComplete="off"
+                            className="block w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/5 py-3 pl-10 pr-4 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600"
+                        />
+                        {showSuggestions && suggestions.length > 0 && (
+                            <div className="absolute left-0 right-0 z-20 mt-1 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-xl">
+                                {suggestions.map((s) => (
+                                    <Link
+                                        key={`${s.type}-${s.id}`}
+                                        href={s.url}
+                                        className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0"
+                                    >
+                                        {s.image ? (
+                                            <img src={s.image} alt={s.name} className="size-10 rounded-lg object-cover" />
+                                        ) : (
+                                            <div className="flex size-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-white/5">
+                                                {s.type === 'store' ? <BuildingStorefrontIcon className="size-5 text-gray-400" /> : <MagnifyingGlassIcon className="size-5 text-gray-400" />}
+                                            </div>
+                                        )}
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{s.name}</p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                {s.type === 'store' ? 'Store' : 'Product'}{s.subtitle ? ` · ${s.subtitle}` : ''}
+                                            </p>
+                                        </div>
+                                    </Link>
+                                ))}
+                                <button
+                                    type="submit"
+                                    className="flex w-full items-center gap-2 px-4 py-3 text-sm font-medium text-primary-600 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                                >
+                                    <MagnifyingGlassIcon className="size-4" />
+                                    Search for "{search}"
+                                </button>
+                            </div>
+                        )}
                     </div>
                     <button type="submit" className="rounded-md bg-primary-600 px-6 py-3 text-sm font-semibold text-white hover:bg-primary-700">Search</button>
                 </form>

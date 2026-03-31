@@ -77,7 +77,7 @@ function classifySkinTone(r: number, g: number, b: number): string {
     return 'deep'
 }
 
-function extractSkinColor(canvas: HTMLCanvasElement, detection: faceapi.WithAge<faceapi.WithGender<faceapi.WithFaceDetection<{}>>>): string {
+function extractSkinColor(canvas: HTMLCanvasElement, detection: any): string {
     const ctx = canvas.getContext('2d')
     if (!ctx) return 'medium'
 

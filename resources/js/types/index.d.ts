@@ -305,6 +305,7 @@ export interface SharedProps {
         reservation_hold_hours: number;
         customer_registration_enabled: boolean;
         vendor_registration_enabled: boolean;
+        google_login_enabled: boolean;
         social_facebook?: string;
         social_instagram?: string;
         social_twitter?: string;

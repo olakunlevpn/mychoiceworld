@@ -59,6 +59,15 @@ class GeneralSettings extends Settings
 
     public ?string $contact_email;
 
+    // Google OAuth
+    public ?string $google_client_id;
+
+    public ?string $google_client_secret;
+
+    public ?string $google_redirect_uri;
+
+    public bool $google_login_enabled;
+
     // Social media
     public ?string $social_facebook;
 

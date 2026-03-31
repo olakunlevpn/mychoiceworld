@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\PageStatus;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Customer\AiMatchController;
 use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
 use App\Http\Controllers\Customer\NotificationController;
@@ -39,6 +40,10 @@ Route::get('/stores', [StoreBrowseController::class, 'index'])->name('stores.ind
 Route::get('/stores/{vendor:slug}', [StoreBrowseController::class, 'show'])->name('stores.show');
 Route::get('/search', SearchController::class)->name('search');
 Route::get('/search/suggest', [SearchController::class, 'suggest'])->middleware('throttle:60,1')->name('search.suggest');
+
+// Google OAuth
+Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
 
 // CMS pages (dynamic — replaces hardcoded about/privacy/terms/cookies)
 Route::get('/page/{page:slug}', function (Page $page) {

@@ -68,6 +68,10 @@ class GeneralSettingsPage extends Page implements HasForms
             'currency_code' => $settings->currency_code,
             'currency_symbol' => $settings->currency_symbol,
             'default_country' => $settings->default_country,
+            'google_client_id' => $settings->google_client_id,
+            'google_client_secret' => $settings->google_client_secret,
+            'google_redirect_uri' => $settings->google_redirect_uri ?: url('/auth/google/callback'),
+            'google_login_enabled' => $settings->google_login_enabled,
             'customer_registration_enabled' => $settings->customer_registration_enabled,
             'vendor_registration_enabled' => $settings->vendor_registration_enabled,
             'ai_requires_account' => $settings->ai_requires_account,
@@ -175,6 +179,26 @@ class GeneralSettingsPage extends Page implements HasForms
                         ]),
                     ]),
 
+                Section::make(__('settings.google_oauth'))
+                    ->description(__('settings.google_oauth_description'))
+                    ->schema([
+                        Toggle::make('google_login_enabled')
+                            ->label(__('settings.google_login_enabled')),
+                        Grid::make(2)->schema([
+                            TextInput::make('google_client_id')
+                                ->label(__('settings.google_client_id'))
+                                ->maxLength(255),
+                            TextInput::make('google_client_secret')
+                                ->label(__('settings.google_client_secret'))
+                                ->password()
+                                ->maxLength(255),
+                        ]),
+                        TextInput::make('google_redirect_uri')
+                            ->label(__('settings.google_redirect_uri'))
+                            ->maxLength(500)
+                            ->helperText('Default: '.url('/auth/google/callback')),
+                    ]),
+
                 Section::make(__('settings.registration'))
                     ->schema([
                         Toggle::make('customer_registration_enabled')
@@ -208,6 +232,10 @@ class GeneralSettingsPage extends Page implements HasForms
         $settings->currency_code = $data['currency_code'];
         $settings->currency_symbol = $data['currency_symbol'];
         $settings->default_country = $data['default_country'];
+        $settings->google_client_id = $data['google_client_id'];
+        $settings->google_client_secret = $data['google_client_secret'];
+        $settings->google_redirect_uri = $data['google_redirect_uri'];
+        $settings->google_login_enabled = $data['google_login_enabled'] ?? false;
         $settings->customer_registration_enabled = $data['customer_registration_enabled'] ?? false;
         $settings->vendor_registration_enabled = $data['vendor_registration_enabled'] ?? false;
         $settings->ai_requires_account = $data['ai_requires_account'] ?? false;

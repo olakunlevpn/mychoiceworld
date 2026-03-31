@@ -73,6 +73,7 @@ class HandleInertiaRequests extends Middleware
                 'reservation_hold_hours' => $settings->reservation_hold_hours,
                 'customer_registration_enabled' => $settings->customer_registration_enabled,
                 'vendor_registration_enabled' => $settings->vendor_registration_enabled,
+                'google_login_enabled' => $settings->google_login_enabled,
                 'social_facebook' => $settings->social_facebook,
                 'social_instagram' => $settings->social_instagram,
                 'social_twitter' => $settings->social_twitter,

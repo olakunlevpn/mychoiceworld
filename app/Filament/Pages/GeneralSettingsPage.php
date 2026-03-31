@@ -62,6 +62,9 @@ class GeneralSettingsPage extends Page implements HasForms
             'logo_mobile_light' => $settings->logo_mobile_light,
             'favicon_path' => $settings->favicon_path,
             'homepage_background' => $settings->homepage_background,
+            'contact_address' => $settings->contact_address,
+            'contact_phone' => $settings->contact_phone,
+            'contact_email' => $settings->contact_email,
             'currency_code' => $settings->currency_code,
             'currency_symbol' => $settings->currency_symbol,
             'default_country' => $settings->default_country,
@@ -136,6 +139,24 @@ class GeneralSettingsPage extends Page implements HasForms
                             ->visibility('public'),
                     ]),
 
+                Section::make(__('settings.contact_info'))
+                    ->description(__('settings.contact_info_description'))
+                    ->schema([
+                        TextInput::make('contact_address')
+                            ->label(__('settings.contact_address'))
+                            ->maxLength(500),
+                        Grid::make(2)->schema([
+                            TextInput::make('contact_phone')
+                                ->label(__('settings.contact_phone'))
+                                ->tel()
+                                ->maxLength(30),
+                            TextInput::make('contact_email')
+                                ->label(__('settings.contact_email'))
+                                ->email()
+                                ->maxLength(255),
+                        ]),
+                    ]),
+
                 Section::make(__('settings.currency_locale'))
                     ->schema([
                         Grid::make(2)->schema([
@@ -181,6 +202,9 @@ class GeneralSettingsPage extends Page implements HasForms
         $settings->logo_mobile_light = $data['logo_mobile_light'];
         $settings->favicon_path = $data['favicon_path'];
         $settings->homepage_background = $data['homepage_background'];
+        $settings->contact_address = $data['contact_address'];
+        $settings->contact_phone = $data['contact_phone'];
+        $settings->contact_email = $data['contact_email'];
         $settings->currency_code = $data['currency_code'];
         $settings->currency_symbol = $data['currency_symbol'];
         $settings->default_country = $data['default_country'];

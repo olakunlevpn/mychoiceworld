@@ -294,6 +294,9 @@ export interface SharedProps {
         logo_mobile_light?: string;
         favicon_path?: string;
         homepage_background?: string;
+        contact_address?: string;
+        contact_phone?: string;
+        contact_email?: string;
         currency_code: string;
         currency_symbol: string;
         default_country: string;

@@ -52,6 +52,13 @@ class GeneralSettings extends Settings
 
     public bool $ai_requires_account;
 
+    // Contact info
+    public ?string $contact_address;
+
+    public ?string $contact_phone;
+
+    public ?string $contact_email;
+
     // Social media
     public ?string $social_facebook;
 

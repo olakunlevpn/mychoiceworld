@@ -11,6 +11,7 @@ use App\Models\EventType;
 use App\Models\Product;
 use App\Models\StylePreference;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -109,6 +110,10 @@ class ProductBrowseController extends Controller
             abort(404);
         }
 
+        $lat = $request->float('lat');
+        $lng = $request->float('lng');
+        $hasCoords = $lat && $lng;
+
         $product->load([
             'images' => fn ($q) => $q->orderBy('sort_order'),
             'variants' => fn ($q) => $q->where('is_active', true),
@@ -118,6 +123,14 @@ class ProductBrowseController extends Controller
             'stylePreferences:id,name',
         ]);
 
+        $vendorDistanceKm = null;
+        if ($hasCoords && $product->vendor?->id) {
+            $vendorDistanceKm = DB::selectOne(
+                'SELECT ST_Distance_Sphere(IFNULL(location, ST_GeomFromText(?)), ST_GeomFromText(?)) / 1000 as distance_km FROM vendors WHERE id = ?',
+                ["POINT({$lng} {$lat})", "POINT({$lng} {$lat})", $product->vendor->id],
+            )?->distance_km;
+        }
+
         $relatedProducts = Product::query()
             ->active()
             ->fromApprovedVendors()
@@ -125,6 +138,16 @@ class ProductBrowseController extends Controller
             ->where(fn ($q) => $q
                 ->where('category_id', $product->category_id)
                 ->orWhere('vendor_id', $product->vendor_id))
+            ->when($hasCoords, function ($q) use ($lat, $lng) {
+                $q->addSelect(['products.*'])
+                    ->selectRaw(
+                        'ST_Distance_Sphere(
+                            IFNULL((SELECT location FROM vendors WHERE vendors.id = products.vendor_id), ST_GeomFromText(?)),
+                            ST_GeomFromText(?)
+                        ) / 1000 as distance_km',
+                        ["POINT({$lng} {$lat})", "POINT({$lng} {$lat})"],
+                    );
+            })
             ->with(['primaryImage', 'vendor:id,store_name,slug'])
             ->limit(8)
             ->inRandomOrder()
@@ -155,6 +178,7 @@ class ProductBrowseController extends Controller
         return Inertia::render('ProductDetail', [
             'product' => $product,
             'relatedProducts' => $relatedProducts,
+            'vendorDistanceKm' => $vendorDistanceKm ? round((float) $vendorDistanceKm, 1) : null,
             'wishlisted' => $wishlisted,
             'sizes' => $sizes,
             'colors' => $colors,

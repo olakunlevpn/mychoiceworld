@@ -1,7 +1,8 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import PublicLayout from '@/Layouts/PublicLayout'
+import { useLocation } from '@/contexts/LocationContext'
 import ReservationModal from '@/Components/ReservationModal'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import { MapPinIcon, HeartIcon, ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { StarIcon, HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
@@ -23,6 +24,7 @@ interface Props {
         style_preferences: { id: number; name: string }[]
     }
     relatedProducts: (Product & { primary_image?: ProductImage; vendor?: { store_name: string; slug: string } })[]
+    vendorDistanceKm?: number | null
     wishlisted: boolean
     sizes: string[]
     colors: ProductColor[]
@@ -32,8 +34,15 @@ function cn(...classes: (string | boolean | undefined)[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function ProductDetail({ product, relatedProducts, wishlisted: initialWishlisted, sizes, colors }: Props) {
+export default function ProductDetail({ product, relatedProducts, vendorDistanceKm, wishlisted: initialWishlisted, sizes, colors }: Props) {
     const { settings } = usePage().props as unknown as SharedProps
+    const { coordinates } = useLocation()
+
+    useEffect(() => {
+        if (coordinates && vendorDistanceKm == null) {
+            router.reload({ data: { lat: coordinates.lat, lng: coordinates.lng }, only: ['vendorDistanceKm', 'relatedProducts'] })
+        }
+    }, [coordinates])
     const [selectedColor, setSelectedColor] = useState(colors[0]?.name || '')
 
     const filteredImages = selectedColor
@@ -297,7 +306,10 @@ export default function ProductDetail({ product, relatedProducts, wishlisted: in
                                     )}
                                     <div>
                                         <p className="text-sm font-semibold text-gray-900 dark:text-white">{product.vendor.store_name}</p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">{product.vendor.city}</p>
+                                        <p className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                                            <MapPinIcon className="size-3 shrink-0" />
+                                            {vendorDistanceKm != null ? `${vendorDistanceKm} km away · ${product.vendor.city}` : product.vendor.city}
+                                        </p>
                                     </div>
                                 </div>
                                 <Link href={`/stores/${product.vendor.slug}`} className="text-xs font-semibold text-primary-600 hover:text-primary-500">View Store</Link>
@@ -384,21 +396,31 @@ export default function ProductDetail({ product, relatedProducts, wishlisted: in
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">You May Also Like</h2>
                         <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 sm:grid-cols-3 lg:grid-cols-4">
                             {relatedProducts.slice(0, 8).map((rp) => (
-                                <Link key={rp.id} href={`/products/${rp.slug}`} className="group overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/5 transition-shadow hover:shadow-lg">
-                                    <div className="overflow-hidden">
-                                        <img
-                                            src={rp.primary_image?.url || '/images/placeholder.jpg'}
-                                            alt={rp.name}
-                                            className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                            loading="lazy"
-                                        />
+                                <div key={rp.id} className="group">
+                                    <div className="relative overflow-hidden rounded-2xl">
+                                        <Link href={`/products/${rp.slug}`}>
+                                            <img
+                                                src={rp.primary_image?.url || '/images/placeholder.jpg'}
+                                                alt={rp.name}
+                                                className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                loading="lazy"
+                                            />
+                                        </Link>
+                                        {rp.distance_km != null && (
+                                            <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
+                                                <MapPinIcon className="size-3 text-primary-600" />
+                                                <span className="text-xs font-medium text-white">{Number(rp.distance_km).toFixed(1)} km away</span>
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="p-3">
-                                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">{rp.name}</h3>
+                                    <div className="mt-3">
+                                        <Link href={`/products/${rp.slug}`}>
+                                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate group-hover:text-primary-600 transition-colors">{rp.name}</h3>
+                                        </Link>
                                         <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{rp.vendor?.store_name}</p>
-                                        <p className="mt-1 text-sm font-bold text-gray-900 dark:text-white">{formatPrice(rp.price)}</p>
+                                        <p className="mt-1 text-sm font-bold text-primary-600">{formatPrice(rp.price)}</p>
                                     </div>
-                                </Link>
+                                </div>
                             ))}
                         </div>
                     </section>

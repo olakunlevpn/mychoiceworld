@@ -1,6 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import PublicLayout from '@/Layouts/PublicLayout'
-import { MagnifyingGlassIcon, BuildingStorefrontIcon } from '@heroicons/react/24/outline'
+import { useLocation } from '@/contexts/LocationContext'
+import { MagnifyingGlassIcon, BuildingStorefrontIcon, MapPinIcon } from '@heroicons/react/24/outline'
 import { StarIcon } from '@heroicons/react/24/solid'
 import { useState, useRef, useCallback, useEffect } from 'react'
 import type { Product, ProductImage, Vendor, SharedProps } from '@/types'
@@ -23,6 +24,7 @@ interface Props {
 
 export default function SearchResults({ query, products, vendors }: Props) {
     const { settings } = usePage().props as unknown as SharedProps
+    const { coordinates } = useLocation()
     const [search, setSearch] = useState(query)
     const [suggestions, setSuggestions] = useState<Suggestion[]>([])
     const [showSuggestions, setShowSuggestions] = useState(false)
@@ -56,7 +58,9 @@ export default function SearchResults({ query, products, vendors }: Props) {
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault()
         setShowSuggestions(false)
-        router.get('/search', { q: search })
+        const params: Record<string, string> = { q: search }
+        if (coordinates) { params.lat = String(coordinates.lat); params.lng = String(coordinates.lng) }
+        router.get('/search', params)
     }
 
     const formatPrice = (cents: number) => `${settings.currency_symbol}${(cents / 100).toFixed(0)}`
@@ -140,7 +144,10 @@ export default function SearchResults({ query, products, vendors }: Props) {
                                     )}
                                     <div className="min-w-0 flex-1">
                                         <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">{vendor.store_name}</h3>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">{vendor.city}</p>
+                                        <p className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                                            <MapPinIcon className="size-3 shrink-0" />
+                                            {vendor.distance_km != null ? `${Number(vendor.distance_km).toFixed(1)} km away` : vendor.city}
+                                        </p>
                                         <div className="mt-1 flex items-center gap-1">
                                             <StarIcon className="size-3.5 text-yellow-400" />
                                             <span className="text-xs font-medium text-gray-900 dark:text-white">{vendor.rating_avg}</span>
@@ -158,16 +165,26 @@ export default function SearchResults({ query, products, vendors }: Props) {
                         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Products</h2>
                         <div className="mt-4 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                             {products.map((product) => (
-                                <Link key={product.id} href={`/products/${product.slug}`} className="group overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/5 transition-shadow hover:shadow-lg">
-                                    <div className="overflow-hidden">
-                                        <img src={product.primary_image?.url || '/images/placeholder.jpg'} alt={product.name} className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+                                <div key={product.id} className="group">
+                                    <div className="relative overflow-hidden rounded-2xl">
+                                        <Link href={`/products/${product.slug}`}>
+                                            <img src={product.primary_image?.url || '/images/placeholder.jpg'} alt={product.name} className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+                                        </Link>
+                                        {product.distance_km != null && (
+                                            <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
+                                                <MapPinIcon className="size-3 text-primary-600" />
+                                                <span className="text-xs font-medium text-white">{product.distance_km.toFixed(1)} km away</span>
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="p-3">
-                                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 truncate">{product.name}</h3>
+                                    <div className="mt-3">
+                                        <Link href={`/products/${product.slug}`}>
+                                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 truncate">{product.name}</h3>
+                                        </Link>
                                         <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{product.vendor?.store_name}</p>
-                                        <p className="mt-1 text-sm font-bold text-gray-900 dark:text-white">{formatPrice(product.price)}</p>
+                                        <p className="mt-1 text-sm font-bold text-primary-600">{formatPrice(product.price)}</p>
                                     </div>
-                                </Link>
+                                </div>
                             ))}
                         </div>
                     </section>

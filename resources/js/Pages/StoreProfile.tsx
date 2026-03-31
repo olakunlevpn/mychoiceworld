@@ -1,5 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import PublicLayout from '@/Layouts/PublicLayout'
+import { useEffect } from 'react'
+import { useLocation } from '@/contexts/LocationContext'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import { MapPinIcon, PhoneIcon, ClockIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { StarIcon, CheckBadgeIcon } from '@heroicons/react/24/solid'
@@ -17,6 +19,7 @@ interface VendorDetail {
 
 interface Props {
     vendor: VendorDetail
+    vendorDistanceKm?: number | null
     products: PaginatedResponse<Product & { primary_image?: ProductImage; category?: { id: number; name: string } }>
     reviews: (Review & { customer?: { id: number; name: string; avatar?: string } })[]
     ratingSummary: { average: number; count: number }
@@ -26,8 +29,15 @@ function cn(...classes: (string | boolean | undefined)[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function StoreProfile({ vendor, products, reviews, ratingSummary }: Props) {
+export default function StoreProfile({ vendor, vendorDistanceKm, products, reviews, ratingSummary }: Props) {
     const { settings } = usePage().props as unknown as SharedProps
+    const { coordinates } = useLocation()
+
+    useEffect(() => {
+        if (coordinates && vendorDistanceKm == null) {
+            router.reload({ data: { lat: coordinates.lat, lng: coordinates.lng }, only: ['vendorDistanceKm'] })
+        }
+    }, [coordinates])
 
     const formatPrice = (cents: number) => `${settings.currency_symbol}${(cents / 100).toFixed(0)}`
 
@@ -79,7 +89,7 @@ export default function StoreProfile({ vendor, products, reviews, ratingSummary 
                                         </div>
                                         <div className="flex items-center gap-x-1 text-sm text-gray-400">
                                             <MapPinIcon className="size-4 text-primary-400" />
-                                            <span>{vendor.city}, {vendor.state}</span>
+                                            <span>{vendorDistanceKm != null ? `${vendorDistanceKm} km away · ` : ''}{vendor.city}, {vendor.state}</span>
                                         </div>
                                     </div>
                             </div>

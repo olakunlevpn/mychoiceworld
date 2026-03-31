@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Concerns\SearchableWithFallback;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -53,6 +54,18 @@ class StoreBrowseController extends Controller
 
     public function show(Request $request, Vendor $vendor): Response
     {
+        $lat = $request->float('lat');
+        $lng = $request->float('lng');
+        $hasCoords = $lat && $lng;
+
+        $vendorDistanceKm = null;
+        if ($hasCoords) {
+            $vendorDistanceKm = DB::selectOne(
+                'SELECT ST_Distance_Sphere(IFNULL(location, ST_GeomFromText(?)), ST_GeomFromText(?)) / 1000 as distance_km FROM vendors WHERE id = ?',
+                ["POINT({$lng} {$lat})", "POINT({$lng} {$lat})", $vendor->id],
+            )?->distance_km;
+        }
+
         $products = $vendor->products()
             ->active()
             ->with(['primaryImage', 'category:id,name'])
@@ -80,6 +93,7 @@ class StoreBrowseController extends Controller
         ];
 
         return Inertia::render('StoreProfile', [
+            'vendorDistanceKm' => $vendorDistanceKm ? round((float) $vendorDistanceKm, 1) : null,
             'vendor' => $vendor->only([
                 'id', 'store_name', 'slug', 'logo', 'banner', 'description',
                 'phone', 'whatsapp', 'email', 'address', 'city', 'state',

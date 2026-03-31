@@ -62,6 +62,9 @@ class SearchController extends Controller
     public function __invoke(Request $request): Response
     {
         $query = $request->input('q', '');
+        $lat = $request->float('lat');
+        $lng = $request->float('lng');
+        $hasCoords = $lat && $lng;
 
         $products = collect();
         $vendors = collect();
@@ -76,6 +79,16 @@ class SearchController extends Controller
                 ->when($productIds !== null,
                     fn ($q) => $q->whereIn('id', $productIds),
                     fn ($q) => $q->search($query))
+                ->when($hasCoords, function ($q) use ($lat, $lng) {
+                    $q->addSelect(['products.*'])
+                        ->selectRaw(
+                            'ST_Distance_Sphere(
+                                IFNULL((SELECT location FROM vendors WHERE vendors.id = products.vendor_id), ST_GeomFromText(?)),
+                                ST_GeomFromText(?)
+                            ) / 1000 as distance_km',
+                            ["POINT({$lng} {$lat})", "POINT({$lng} {$lat})"],
+                        );
+                })
                 ->with(['primaryImage', 'vendor:id,store_name,slug,city', 'category:id,name'])
                 ->limit(20)
                 ->get();
@@ -86,6 +99,12 @@ class SearchController extends Controller
                     fn ($q) => $q->whereIn('id', $vendorIds),
                     fn ($q) => $q->search($query))
                 ->select(['id', 'store_name', 'slug', 'logo', 'city', 'rating_avg', 'rating_count'])
+                ->when($hasCoords, function ($q) use ($lat, $lng) {
+                    $q->selectRaw(
+                        'ST_Distance_Sphere(IFNULL(location, ST_GeomFromText(?)), ST_GeomFromText(?)) / 1000 as distance_km',
+                        ["POINT({$lng} {$lat})", "POINT({$lng} {$lat})"],
+                    );
+                })
                 ->limit(20)
                 ->get();
         }

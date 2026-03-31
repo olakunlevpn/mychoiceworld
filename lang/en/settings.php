@@ -23,6 +23,8 @@ return [
     'contact_address' => 'Business Address',
     'contact_phone' => 'Phone Number',
     'contact_email' => 'Contact Email',
+    'social_logins' => 'Social Logins',
+    'social_logins_description' => 'Configure third-party authentication providers to allow users to sign in with their existing accounts.',
     'google_oauth' => 'Google Sign-In',
     'google_oauth_description' => 'Configure Google OAuth credentials to allow users to sign in with their Google account. Create credentials at console.cloud.google.com.',
     'google_client_id' => 'Google Client ID',

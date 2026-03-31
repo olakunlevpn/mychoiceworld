@@ -64,7 +64,8 @@ export default function VendorStoreProfile({ vendor }: Props) {
                             </div>
                             <div>
                                 <label className={labelClass}>WhatsApp</label>
-                                <input type="tel" value={data.whatsapp} onChange={(e) => setData('whatsapp', e.target.value)} className={inputClass} />
+                                <input type="tel" value={data.whatsapp} onChange={(e) => setData('whatsapp', e.target.value)} placeholder="919876543210" className={inputClass} />
+                                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Country code + number, no + or spaces. e.g. 919876543210</p>
                             </div>
                             <div className="sm:col-span-2">
                                 <label className={labelClass}>Email</label>

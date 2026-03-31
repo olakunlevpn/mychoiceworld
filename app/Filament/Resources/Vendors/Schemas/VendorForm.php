@@ -56,7 +56,9 @@ class VendorForm
                                 ->tel(),
                             TextInput::make('whatsapp')
                                 ->label(__('vendor.whatsapp'))
-                                ->tel(),
+                                ->tel()
+                                ->placeholder('919876543210')
+                                ->helperText('Country code + number, no + or spaces. e.g. 919876543210'),
                             TextInput::make('email')
                                 ->label(__('vendor.email'))
                                 ->email(),

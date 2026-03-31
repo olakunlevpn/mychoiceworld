@@ -95,7 +95,7 @@ export default function VendorRegister() {
                         <div className="mt-8 space-y-5">
                             <div><label className={labelClass}>Store name</label><input type="text" value={data.store_name} onChange={(e) => setData('store_name', e.target.value)} placeholder="My Awesome Store" className={inputClass} />{errors.store_name && <p className={errorClass}>{errors.store_name}</p>}</div>
                             <div><label className={labelClass}>Phone number</label><input type="tel" value={data.phone} onChange={(e) => setData('phone', e.target.value)} placeholder="+91 98765 43210" className={inputClass} />{errors.phone && <p className={errorClass}>{errors.phone}</p>}</div>
-                            <div><label className={labelClass}>WhatsApp number</label><input type="tel" value={data.whatsapp} onChange={(e) => setData('whatsapp', e.target.value)} placeholder="+91 98765 43210" className={inputClass} /></div>
+                            <div><label className={labelClass}>WhatsApp number</label><input type="tel" value={data.whatsapp} onChange={(e) => setData('whatsapp', e.target.value)} placeholder="919876543210" className={inputClass} /><p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Country code + number, no + or spaces. e.g. 919876543210</p></div>
                             <div><label className={labelClass}>Store email</label><input type="email" value={data.store_email} onChange={(e) => setData('store_email', e.target.value)} placeholder="store@example.com" className={inputClass} /></div>
                         </div>
                     )}

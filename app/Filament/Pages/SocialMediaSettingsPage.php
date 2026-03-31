@@ -101,6 +101,8 @@ class SocialMediaSettingsPage extends Page implements HasForms
                         Grid::make(2)->schema([
                             TextInput::make('social_whatsapp')
                                 ->label(__('settings.social_whatsapp'))
+                                ->placeholder('919876543210')
+                                ->helperText('Country code + number, no + or spaces. e.g. 919876543210')
                                 ->maxLength(20),
                             TextInput::make('social_telegram')
                                 ->label(__('settings.social_telegram'))

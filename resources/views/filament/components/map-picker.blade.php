@@ -56,19 +56,58 @@
                 this.map.setZoom(17)
                 this.marker.setPosition({ lat, lng })
                 this.updatePosition(lat, lng)
+                this.fillAddressFields(place)
             })
 
             this.map.addListener('click', (e) => {
                 this.marker.setPosition(e.latLng)
-                this.updatePosition(e.latLng.lat(), e.latLng.lng())
+                const lat = e.latLng.lat()
+                const lng = e.latLng.lng()
+                this.updatePosition(lat, lng)
+                this.reverseGeocode(lat, lng)
             })
 
             this.marker.addListener('dragend', () => {
                 const pos = this.marker.getPosition()
-                this.updatePosition(pos.lat(), pos.lng())
+                const lat = pos.lat()
+                const lng = pos.lng()
+                this.updatePosition(lat, lng)
+                this.reverseGeocode(lat, lng)
             })
 
             setTimeout(() => google.maps.event.trigger(this.map, 'resize'), 200)
+        },
+
+        getComponent(place, type) {
+            const comp = place.address_components?.find(c => c.types.includes(type))
+            return comp?.long_name || ''
+        },
+
+        fillAddressFields(place) {
+            const streetNumber = this.getComponent(place, 'street_number')
+            const route = this.getComponent(place, 'route')
+            const sublocality = this.getComponent(place, 'sublocality_level_1') || this.getComponent(place, 'sublocality')
+            const address = [streetNumber, route, sublocality].filter(Boolean).join(', ') || place.formatted_address || ''
+            const city = this.getComponent(place, 'locality') || this.getComponent(place, 'administrative_area_level_2') || ''
+            const state = this.getComponent(place, 'administrative_area_level_1')
+            const country = this.getComponent(place, 'country')
+            const postalCode = this.getComponent(place, 'postal_code')
+
+            if (address) $wire.set('data.address', address)
+            if (city) $wire.set('data.city', city)
+            if (state) $wire.set('data.state', state)
+            if (country) $wire.set('data.country', country)
+            if (postalCode) $wire.set('data.postal_code', postalCode)
+        },
+
+        reverseGeocode(lat, lng) {
+            const geocoder = new google.maps.Geocoder()
+            geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+                if (status === 'OK' && results?.[0]) {
+                    this.$refs.searchInput.value = results[0].formatted_address
+                    this.fillAddressFields(results[0])
+                }
+            })
         },
 
         updatePosition(lat, lng) {
@@ -87,6 +126,7 @@
                 this.map.setZoom(17)
                 this.marker.setPosition({ lat, lng })
                 this.updatePosition(lat, lng)
+                this.reverseGeocode(lat, lng)
             }, () => {}, { timeout: 10000, enableHighAccuracy: true })
         }
     }"

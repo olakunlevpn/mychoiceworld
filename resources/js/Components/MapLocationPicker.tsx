@@ -45,11 +45,6 @@ function parseGooglePlace(place: any): AddressComponents {
         const comp = place.address_components?.find((c: any) => c.types.includes(type))
         return comp?.long_name || ''
     }
-    const getShort = (type: string): string => {
-        const comp = place.address_components?.find((c: any) => c.types.includes(type))
-        return comp?.short_name || ''
-    }
-
     const streetNumber = get('street_number')
     const route = get('route')
     const sublocality = get('sublocality_level_1') || get('sublocality')

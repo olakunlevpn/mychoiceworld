@@ -1,5 +1,6 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import PasswordInput from '@/Components/PasswordInput';
 import type { SharedProps } from '@/types';
 
 export default function ResetPassword({ token, email }: { token: string; email: string }) {
@@ -31,12 +32,12 @@ export default function ResetPassword({ token, email }: { token: string; email: 
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-600 dark:text-gray-300">New password</label>
-                            <input type="password" value={data.password} onChange={(e) => setData('password', e.target.value)} autoFocus required placeholder="••••••••" className={inputClass} />
+                            <PasswordInput value={data.password} onChange={(e) => setData('password', e.target.value)} required className={inputClass} />
                             {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password}</p>}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-600 dark:text-gray-300">Confirm password</label>
-                            <input type="password" value={data.password_confirmation} onChange={(e) => setData('password_confirmation', e.target.value)} required placeholder="••••••••" className={inputClass} />
+                            <PasswordInput value={data.password_confirmation} onChange={(e) => setData('password_confirmation', e.target.value)} required autoComplete="new-password" className={inputClass} />
                             {errors.password_confirmation && <p className="mt-1 text-xs text-red-400">{errors.password_confirmation}</p>}
                         </div>
                         <button type="submit" disabled={processing} className="flex w-full justify-center rounded-md bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 disabled:opacity-50">

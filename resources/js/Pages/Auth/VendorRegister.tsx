@@ -1,6 +1,7 @@
 import { Head, Link, useForm, usePage, router } from '@inertiajs/react'
 import { useState, useRef } from 'react'
 import SiteLogo from '@/Components/SiteLogo'
+import PasswordInput from '@/Components/PasswordInput'
 import type { SharedProps } from '@/types'
 
 const steps = ['Account', 'Store Details', 'License', 'Location']
@@ -84,8 +85,8 @@ export default function VendorRegister() {
                         <div className="mt-8 space-y-5">
                             <div><label className={labelClass}>Full name</label><input type="text" value={data.name} onChange={(e) => setData('name', e.target.value)} placeholder="John Doe" className={inputClass} />{errors.name && <p className={errorClass}>{errors.name}</p>}</div>
                             <div><label className={labelClass}>Email address</label><input type="email" value={data.email} onChange={(e) => setData('email', e.target.value)} placeholder="you@example.com" className={inputClass} />{errors.email && <p className={errorClass}>{errors.email}</p>}</div>
-                            <div><label className={labelClass}>Password</label><input type="password" value={data.password} onChange={(e) => setData('password', e.target.value)} placeholder="••••••••" className={inputClass} />{errors.password && <p className={errorClass}>{errors.password}</p>}</div>
-                            <div><label className={labelClass}>Confirm password</label><input type="password" value={data.password_confirmation} onChange={(e) => setData('password_confirmation', e.target.value)} placeholder="••••••••" className={inputClass} /></div>
+                            <div><label className={labelClass}>Password</label><PasswordInput value={data.password} onChange={(e) => setData('password', e.target.value)} className={inputClass} />{errors.password && <p className={errorClass}>{errors.password}</p>}</div>
+                            <div><label className={labelClass}>Confirm password</label><PasswordInput value={data.password_confirmation} onChange={(e) => setData('password_confirmation', e.target.value)} autoComplete="new-password" className={inputClass} /></div>
                         </div>
                     )}
 

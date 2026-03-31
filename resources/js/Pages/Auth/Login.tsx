@@ -1,6 +1,7 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 import SiteLogo from '@/Components/SiteLogo';
+import PasswordInput from '@/Components/PasswordInput';
 import type { SharedProps } from '@/types';
 
 export default function Login({ status, canResetPassword }: { status?: string; canResetPassword: boolean }) {
@@ -42,7 +43,7 @@ export default function Login({ status, canResetPassword }: { status?: string; c
 
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Password</label>
-                            <input id="password" type="password" value={data.password} onChange={(e) => setData('password', e.target.value)} autoComplete="current-password" required placeholder="••••••••" className={inputClass} />
+                            <PasswordInput id="password" value={data.password} onChange={(e) => setData('password', e.target.value)} autoComplete="current-password" required className={inputClass} />
                             {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password}</p>}
                         </div>
 

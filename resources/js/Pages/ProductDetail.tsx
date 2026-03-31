@@ -407,7 +407,7 @@ export default function ProductDetail({ product, relatedProducts, vendorDistance
                                             />
                                         </Link>
                                         {rp.distance_km != null && (
-                                            <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
+                                            <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
                                                 <MapPinIcon className="size-3 text-primary-600" />
                                                 <span className="text-xs font-medium text-white">{Number(rp.distance_km).toFixed(1)} km away</span>
                                             </div>

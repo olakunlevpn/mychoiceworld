@@ -206,7 +206,7 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
                 </div>
             </Dialog>
 
-            <main>
+            <main className="overflow-x-hidden">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     {/* Page header */}
                     <div className="pb-6 pt-16 sm:pt-24">
@@ -346,7 +346,7 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
                                                         />
                                                     </Link>
                                                     {product.distance_km != null && (
-                                                        <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
+                                                        <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
                                                             <MapPinIcon className="size-3 text-primary-600" />
                                                             <span className="text-xs font-medium text-white">{product.distance_km!.toFixed(1)} km away</span>
                                                         </div>

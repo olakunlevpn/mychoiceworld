@@ -333,7 +333,7 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
                                 </div>
                             ) : (
                                 <>
-                                    <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+                                    <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-3 xl:gap-x-6">
                                         {products.data.map((product) => (
                                             <div key={product.id} className="group relative">
                                                 <div className="relative overflow-hidden rounded-2xl">

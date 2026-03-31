@@ -43,12 +43,19 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
     const { settings } = usePage().props as unknown as SharedProps
     const { city, coordinates, openModal } = useLocation()
     const [currentSlide, setCurrentSlide] = useState(0)
+    const [selectedRadius, setSelectedRadius] = useState<number | null>(null)
     const [reviewPage, setReviewPage] = useState(0)
     const reviewsPerPage = 3
     const totalReviewPages = Math.ceil(recentReviews.length / reviewsPerPage)
     const visibleReviews = recentReviews.slice(reviewPage * reviewsPerPage, reviewPage * reviewsPerPage + reviewsPerPage)
 
     const formatPrice = (cents: number) => `${settings.currency_symbol}${(cents / 100).toFixed(0)}`
+
+    const radiusFilteredProducts = selectedRadius
+        ? featuredProducts.filter(p => p.distance_km != null && p.distance_km <= selectedRadius)
+        : featuredProducts
+    const showRadiusNotice = selectedRadius && radiusFilteredProducts.length === 0 && featuredProducts.length > 0
+    const displayProducts = radiusFilteredProducts.length > 0 ? radiusFilteredProducts : featuredProducts
 
     const nextSlide = useCallback(() => setCurrentSlide((s) => (s + 1) % heroSlides.length), [])
     const prevSlide = useCallback(() => setCurrentSlide((s) => (s - 1 + heroSlides.length) % heroSlides.length), [])
@@ -149,15 +156,18 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
                                     <button type="button" onClick={openModal} className="font-medium text-primary-600 hover:text-primary-500">Change</button>
                                     <div className="flex gap-1 ml-2">
                                         {[2, 5, 10].map((km) => (
-                                            <button key={km} type="button" onClick={() => { if (coordinates) router.reload({ data: { lat: coordinates.lat, lng: coordinates.lng, radius: km } }) }} className="rounded-md px-3 py-1 text-xs font-semibold transition-colors bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-white hover:bg-primary-600 hover:text-white">
+                                            <button key={km} type="button" onClick={() => setSelectedRadius(selectedRadius === km ? null : km)} className={`rounded-md px-3 py-1 text-xs font-semibold transition-colors ${selectedRadius === km ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-white hover:bg-primary-600 hover:text-white'}`}>
                                                 {km} km
                                             </button>
                                         ))}
                                     </div>
                                 </div>
                             </div>
+                            {showRadiusNotice && (
+                                <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">No products within {selectedRadius} km. Showing all nearby products instead.</p>
+                            )}
                             <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-6 sm:gap-x-6 lg:grid-cols-4">
-                                {featuredProducts.slice(0, 8).map((product) => {
+                                {displayProducts.slice(0, 8).map((product) => {
                                     return (
                                         <div key={product.id} className="group">
                                             <div className="relative overflow-hidden rounded-2xl">

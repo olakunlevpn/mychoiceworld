@@ -58,6 +58,12 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
         return () => clearInterval(timer)
     }, [nextSlide])
 
+    useEffect(() => {
+        if (coordinates && featuredProducts.length > 0 && featuredProducts[0].distance_km == null) {
+            router.reload({ data: { lat: coordinates.lat, lng: coordinates.lng }, only: ['featuredProducts', 'featuredVendors'] })
+        }
+    }, [coordinates])
+
     return (
         <PublicLayout>
             <Head title="Home" />

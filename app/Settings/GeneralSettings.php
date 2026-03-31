@@ -24,6 +24,8 @@ class GeneralSettings extends Settings
 
     public ?string $favicon_path;
 
+    public ?string $homepage_background;
+
     public string $currency_code;
 
     public string $currency_symbol;

@@ -113,7 +113,7 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
             </section>
 
             {/* ── Background image wrapper ────────────────────────── */}
-            <div className="relative bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/styles/style-3.jpg')" }}>
+            <div className="relative bg-cover bg-center bg-fixed" style={{ backgroundImage: `url('${settings.homepage_background || '/images/styles/style-3.jpg'}')` }}>
                 <div className="absolute inset-0 bg-gray-50/90 dark:bg-dark/90" />
 
                 {/* Event Category Pills */}

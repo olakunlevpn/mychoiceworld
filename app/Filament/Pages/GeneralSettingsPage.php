@@ -61,6 +61,7 @@ class GeneralSettingsPage extends Page implements HasForms
             'logo_mobile_dark' => $settings->logo_mobile_dark,
             'logo_mobile_light' => $settings->logo_mobile_light,
             'favicon_path' => $settings->favicon_path,
+            'homepage_background' => $settings->homepage_background,
             'currency_code' => $settings->currency_code,
             'currency_symbol' => $settings->currency_symbol,
             'default_country' => $settings->default_country,
@@ -124,6 +125,17 @@ class GeneralSettingsPage extends Page implements HasForms
                         ]),
                     ]),
 
+                Section::make(__('settings.homepage_background_section'))
+                    ->description(__('settings.homepage_background_description'))
+                    ->schema([
+                        FileUpload::make('homepage_background')
+                            ->label(__('settings.homepage_background'))
+                            ->image()
+                            ->disk('public')
+                            ->directory('branding')
+                            ->visibility('public'),
+                    ]),
+
                 Section::make(__('settings.currency_locale'))
                     ->schema([
                         Grid::make(2)->schema([
@@ -168,6 +180,7 @@ class GeneralSettingsPage extends Page implements HasForms
         $settings->logo_mobile_dark = $data['logo_mobile_dark'];
         $settings->logo_mobile_light = $data['logo_mobile_light'];
         $settings->favicon_path = $data['favicon_path'];
+        $settings->homepage_background = $data['homepage_background'];
         $settings->currency_code = $data['currency_code'];
         $settings->currency_symbol = $data['currency_symbol'];
         $settings->default_country = $data['default_country'];

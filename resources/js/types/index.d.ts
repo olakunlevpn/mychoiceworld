@@ -293,6 +293,7 @@ export interface SharedProps {
         logo_mobile_dark?: string;
         logo_mobile_light?: string;
         favicon_path?: string;
+        homepage_background?: string;
         currency_code: string;
         currency_symbol: string;
         default_country: string;

@@ -61,6 +61,7 @@ class HandleInertiaRequests extends Middleware
                 'logo_mobile_dark' => $this->resolveStorageUrl($settings->logo_mobile_dark),
                 'logo_mobile_light' => $this->resolveStorageUrl($settings->logo_mobile_light),
                 'favicon_path' => $this->resolveStorageUrl($settings->favicon_path),
+                'homepage_background' => $this->resolveStorageUrl($settings->homepage_background),
                 'currency_code' => $settings->currency_code,
                 'currency_symbol' => $settings->currency_symbol,
                 'default_country' => $settings->default_country,

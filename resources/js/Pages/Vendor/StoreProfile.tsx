@@ -1,5 +1,6 @@
 import { Head, useForm } from '@inertiajs/react'
 import VendorLayout from '@/Layouts/VendorLayout'
+import MapLocationPicker from '@/Components/MapLocationPicker'
 import type { Vendor } from '@/types'
 
 interface Props {
@@ -17,6 +18,8 @@ export default function VendorStoreProfile({ vendor }: Props) {
         state: vendor.state || '',
         country: vendor.country || '',
         postal_code: vendor.postal_code || '',
+        latitude: '' as string | number,
+        longitude: '' as string | number,
     })
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -77,6 +80,20 @@ export default function VendorStoreProfile({ vendor }: Props) {
                     {/* Location */}
                     <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
                         <h2 className="text-base font-semibold text-gray-900 dark:text-white">Location</h2>
+                        <div className="mt-4">
+                            <MapLocationPicker
+                                latitude={data.latitude ? Number(data.latitude) : null}
+                                longitude={data.longitude ? Number(data.longitude) : null}
+                                onLocationChange={(lat, lng, address) => {
+                                    setData(prev => ({
+                                        ...prev,
+                                        latitude: lat,
+                                        longitude: lng,
+                                        ...(address ? { address } : {}),
+                                    }))
+                                }}
+                            />
+                        </div>
                         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div className="sm:col-span-2">
                                 <label className={labelClass}>Address</label>

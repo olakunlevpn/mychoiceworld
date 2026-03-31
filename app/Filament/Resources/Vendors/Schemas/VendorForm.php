@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ViewField;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -85,16 +86,19 @@ class VendorForm
                                 ->required(),
                             TextInput::make('postal_code')
                                 ->label(__('vendor.postal_code')),
+                            ViewField::make('map_picker')
+                                ->view('filament.components.map-picker')
+                                ->columnSpanFull(),
                             TextInput::make('latitude')
                                 ->label(__('vendor.latitude'))
                                 ->numeric()
                                 ->step(0.000001)
-                                ->helperText('GPS latitude. Use Google Maps to find coordinates.'),
+                                ->reactive(),
                             TextInput::make('longitude')
                                 ->label(__('vendor.longitude'))
                                 ->numeric()
                                 ->step(0.000001)
-                                ->helperText('GPS longitude. Right-click any location on Google Maps to copy coordinates.'),
+                                ->reactive(),
                         ])
                         ->columns(2),
 

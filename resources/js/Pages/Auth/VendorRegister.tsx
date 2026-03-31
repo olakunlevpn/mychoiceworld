@@ -2,6 +2,7 @@ import { Head, Link, useForm, usePage, router } from '@inertiajs/react'
 import { useState, useRef } from 'react'
 import SiteLogo from '@/Components/SiteLogo'
 import PasswordInput from '@/Components/PasswordInput'
+import MapLocationPicker from '@/Components/MapLocationPicker'
 import type { SharedProps } from '@/types'
 
 const steps = ['Account', 'Store Details', 'License', 'Location']
@@ -27,6 +28,8 @@ export default function VendorRegister() {
         state: '',
         country: '',
         postal_code: '',
+        latitude: '' as string | number,
+        longitude: '' as string | number,
     })
 
     const handleNext = () => {
@@ -120,6 +123,18 @@ export default function VendorRegister() {
                     {/* Step 4 — Location */}
                     {currentStep === 4 && (
                         <div className="mt-8 space-y-5">
+                            <MapLocationPicker
+                                latitude={data.latitude ? Number(data.latitude) : null}
+                                longitude={data.longitude ? Number(data.longitude) : null}
+                                onLocationChange={(lat, lng, address) => {
+                                    setData(prev => ({
+                                        ...prev,
+                                        latitude: lat,
+                                        longitude: lng,
+                                        ...(address ? { address } : {}),
+                                    }))
+                                }}
+                            />
                             <div><label className={labelClass}>Address</label><input type="text" value={data.address} onChange={(e) => setData('address', e.target.value)} placeholder="123 Main Street" className={inputClass} />{errors.address && <p className={errorClass}>{errors.address}</p>}</div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div><label className={labelClass}>City</label><input type="text" value={data.city} onChange={(e) => setData('city', e.target.value)} placeholder="Mumbai" className={inputClass} />{errors.city && <p className={errorClass}>{errors.city}</p>}</div>

@@ -1,6 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react'
 import CustomerLayout from '@/Layouts/CustomerLayout'
-import { ClipboardDocumentListIcon, HeartIcon, StarIcon, ClockIcon } from '@heroicons/react/24/outline'
+import { ClipboardDocumentListIcon, HeartIcon, StarIcon, ClockIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { format } from 'date-fns'
 import type { Reservation, Product, ProductImage, SharedProps } from '@/types'
 
@@ -47,6 +47,17 @@ export default function Dashboard({ stats, recentReservations }: Props) {
                             </div>
                         </Link>
                     ))}
+                </div>
+
+                {/* Quick Actions */}
+                <div className="mt-6 flex flex-wrap gap-3">
+                    <Link href="/profile" className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                        <UserCircleIcon className="size-4" />
+                        Edit Profile
+                    </Link>
+                    <Link href="/customer/notifications" className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                        Notifications
+                    </Link>
                 </div>
 
                 {/* Recent Reservations */}

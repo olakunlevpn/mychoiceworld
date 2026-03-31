@@ -25,6 +25,7 @@ interface Props {
     eventTypes: EventType[]
     stylePreferences: StylePreference[]
     genders: GenderOption[]
+    wishlistedIds: number[]
     filters: Record<string, string>
 }
 
@@ -37,11 +38,11 @@ const sortOptions = [
     { name: 'Newest', value: 'newest' },
 ]
 
-export default function Discover({ products, categories, eventTypes, stylePreferences, genders, filters }: Props) {
+export default function Discover({ products, categories, eventTypes, stylePreferences, genders, wishlistedIds: initialWishlistedIds = [], filters }: Props) {
     const { settings } = usePage().props as unknown as SharedProps
     const { city, coordinates, isDetecting, detectLocation, openModal } = useLocation()
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-    const [wishlistedIds, setWishlistedIds] = useState<Set<number>>(new Set())
+    const [wishlistedIds, setWishlistedIds] = useState<Set<number>>(new Set(initialWishlistedIds))
 
     useEffect(() => {
         if (coordinates && products.data.length > 0 && products.data[0].distance_km == null) {

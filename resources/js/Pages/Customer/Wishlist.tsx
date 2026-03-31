@@ -1,6 +1,9 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import CustomerLayout from '@/Layouts/CustomerLayout'
+import { useLocation } from '@/contexts/LocationContext'
 import { HeartIcon } from '@heroicons/react/24/solid'
+import { MapPinIcon } from '@heroicons/react/24/outline'
+import { useEffect } from 'react'
 import type { Wishlist, Product, ProductImage, PaginatedResponse, SharedProps } from '@/types'
 
 interface Props {
@@ -9,7 +12,14 @@ interface Props {
 
 export default function WishlistPage({ wishlists }: Props) {
     const { settings } = usePage().props as unknown as SharedProps
+    const { coordinates } = useLocation()
     const formatPrice = (cents: number) => `${settings.currency_symbol}${(cents / 100).toFixed(0)}`
+
+    useEffect(() => {
+        if (coordinates && wishlists.data.length > 0 && (wishlists.data[0].product as any).distance_km == null) {
+            router.reload({ data: { lat: String(coordinates.lat), lng: String(coordinates.lng) }, only: ['wishlists'] })
+        }
+    }, [coordinates])
 
     const removeFromWishlist = (productId: number) => {
         router.post('/customer/wishlist/toggle', { product_id: productId }, { preserveState: true, preserveScroll: true })
@@ -36,6 +46,12 @@ export default function WishlistPage({ wishlists }: Props) {
                                     <Link href={`/products/${item.product.slug}`}>
                                         <img src={item.product.primary_image?.url || '/images/placeholder.jpg'} alt={item.product.name} className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
                                     </Link>
+                                    {(item.product as any).distance_km != null && (
+                                        <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-dark/80 px-2.5 py-1 backdrop-blur-sm">
+                                            <MapPinIcon className="size-3 text-primary-600" />
+                                            <span className="text-xs font-medium text-white">{Number((item.product as any).distance_km).toFixed(1)} km away</span>
+                                        </div>
+                                    )}
                                     <button type="button" onClick={() => removeFromWishlist(item.product.id)} className="absolute right-2 top-2 rounded-full bg-dark/60 p-1.5 backdrop-blur-sm hover:bg-dark/80">
                                         <HeartIcon className="size-4 text-red-500" />
                                     </button>

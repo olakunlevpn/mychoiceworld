@@ -87,11 +87,16 @@ class ProductBrowseController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
+        $wishlistedIds = $request->user()
+            ? $request->user()->wishlists()->pluck('product_id')->toArray()
+            : [];
+
         return Inertia::render('Discover', [
             'products' => $products,
             'categories' => $categories,
             'eventTypes' => $eventTypes,
             'stylePreferences' => $stylePreferences,
+            'wishlistedIds' => $wishlistedIds,
             'genders' => collect(Gender::cases())->map(fn ($g) => [
                 'value' => $g->value,
                 'label' => $g->getLabel(),

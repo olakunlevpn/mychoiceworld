@@ -13,10 +13,25 @@ class WishlistController extends Controller
 {
     public function index(Request $request): Response
     {
+        $lat = $request->float('lat');
+        $lng = $request->float('lng');
+        $hasCoords = $lat && $lng;
+
         $wishlists = $request->user()
             ->wishlists()
             ->with([
-                'product:id,name,slug,price,compare_price,status',
+                'product' => function ($q) use ($hasCoords, $lat, $lng) {
+                    $q->select(['id', 'name', 'slug', 'price', 'compare_price', 'status', 'vendor_id']);
+                    if ($hasCoords) {
+                        $q->selectRaw(
+                            'ST_Distance_Sphere(
+                                IFNULL((SELECT location FROM vendors WHERE vendors.id = products.vendor_id), ST_GeomFromText(?)),
+                                ST_GeomFromText(?)
+                            ) / 1000 as distance_km',
+                            ["POINT({$lng} {$lat})", "POINT({$lng} {$lat})"],
+                        );
+                    }
+                },
                 'product.primaryImage',
                 'product.vendor:id,store_name,slug',
                 'product.category:id,name',

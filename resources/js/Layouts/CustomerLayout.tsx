@@ -27,7 +27,7 @@ const mobileTabLinks = [
     { name: 'Discover', href: '/products', icon: MagnifyingGlassCircleIcon, activeIcon: MagnifyingGlassCircleIconSolid },
     { name: 'AI Match', href: '/find-my-match', icon: SparklesIcon, activeIcon: SparklesIconSolid },
     { name: 'Reservations', href: '/customer/reservations', icon: ClipboardDocumentListIcon, activeIcon: ClipboardDocumentListIconSolid },
-    { name: 'Profile', href: '/profile', icon: UserCircleIcon, activeIcon: UserCircleIconSolid },
+    { name: 'Dashboard', href: '/customer/dashboard', icon: UserCircleIcon, activeIcon: UserCircleIconSolid },
 ]
 
 export default function CustomerLayout({ children }: PropsWithChildren) {
@@ -148,10 +148,11 @@ export default function CustomerLayout({ children }: PropsWithChildren) {
                                             </MenuButton>
                                             <MenuItems transition className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-900 shadow-2xl ring-1 ring-gray-200 dark:ring-gray-700 transition focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0">
                                                 <div className="py-1">
+                                                    <MenuItem><Link href="/customer/dashboard" className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 data-[focus]:bg-gray-100 dark:data-[focus]:bg-white/5">Dashboard</Link></MenuItem>
                                                     <MenuItem><Link href="/customer/reservations" className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 data-[focus]:bg-gray-100 dark:data-[focus]:bg-white/5">My Reservations</Link></MenuItem>
                                                     <MenuItem><Link href="/customer/wishlist" className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 data-[focus]:bg-gray-100 dark:data-[focus]:bg-white/5">Wishlist</Link></MenuItem>
                                                     <MenuItem><Link href="/customer/reviews" className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 data-[focus]:bg-gray-100 dark:data-[focus]:bg-white/5">My Reviews</Link></MenuItem>
-                                                    <MenuItem><Link href="/profile" className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 data-[focus]:bg-gray-100 dark:data-[focus]:bg-white/5">Profile</Link></MenuItem>
+                                                    <MenuItem><Link href="/profile" className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 data-[focus]:bg-gray-100 dark:data-[focus]:bg-white/5">Edit Profile</Link></MenuItem>
                                                     <div className="border-t border-gray-200 dark:border-gray-700" />
                                                     <MenuItem><button type="button" onClick={handleLogout} className="block w-full px-4 py-2 text-left text-sm text-red-400 data-[focus]:bg-gray-100 dark:data-[focus]:bg-white/5">Logout</button></MenuItem>
                                                 </div>

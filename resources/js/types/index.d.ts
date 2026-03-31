@@ -306,6 +306,7 @@ export interface SharedProps {
         customer_registration_enabled: boolean;
         vendor_registration_enabled: boolean;
         google_login_enabled: boolean;
+        google_maps_api_key?: string;
         social_facebook?: string;
         social_instagram?: string;
         social_twitter?: string;

@@ -74,6 +74,7 @@ class HandleInertiaRequests extends Middleware
                 'customer_registration_enabled' => $settings->customer_registration_enabled,
                 'vendor_registration_enabled' => $settings->vendor_registration_enabled,
                 'google_login_enabled' => $settings->google_login_enabled,
+                'google_maps_api_key' => $settings->google_maps_api_key,
                 'social_facebook' => $settings->social_facebook,
                 'social_instagram' => $settings->social_instagram,
                 'social_twitter' => $settings->social_twitter,

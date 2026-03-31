@@ -1,54 +1,119 @@
+@php
+    $apiKey = app(\App\Settings\GeneralSettings::class)->google_maps_api_key;
+@endphp
+
+@if($apiKey)
 <div
     x-data="{
         lat: $wire.data?.latitude || 20.5937,
         lng: $wire.data?.longitude || 78.9629,
         map: null,
         marker: null,
+        autocomplete: null,
+
         init() {
-            const L = window.L
-            if (!L) return
-
-            this.map = L.map(this.$refs.map).setView([this.lat, this.lng], this.lat !== 20.5937 ? 15 : 5)
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap'
-            }).addTo(this.map)
-
-            this.marker = L.marker([this.lat, this.lng], { draggable: true }).addTo(this.map)
-
-            this.marker.on('dragend', (e) => {
-                const pos = e.target.getLatLng()
-                this.updatePosition(pos.lat, pos.lng)
-            })
-
-            this.map.on('click', (e) => {
-                this.marker.setLatLng(e.latlng)
-                this.updatePosition(e.latlng.lat, e.latlng.lng)
-            })
-
-            setTimeout(() => this.map.invalidateSize(), 200)
+            if (window.google?.maps) {
+                this.initMap()
+            } else {
+                window.initAdminGoogleMap = () => this.initMap()
+                const script = document.createElement('script')
+                script.src = 'https://maps.googleapis.com/maps/api/js?key={{ $apiKey }}&libraries=places&callback=initAdminGoogleMap'
+                script.async = true
+                script.defer = true
+                document.head.appendChild(script)
+            }
         },
+
+        initMap() {
+            const center = { lat: parseFloat(this.lat) || 20.5937, lng: parseFloat(this.lng) || 78.9629 }
+            const zoom = (this.lat && this.lat != 20.5937) ? 16 : 5
+
+            this.map = new google.maps.Map(this.$refs.map, {
+                center,
+                zoom,
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: false,
+            })
+
+            this.marker = new google.maps.Marker({
+                map: this.map,
+                position: center,
+                draggable: true,
+            })
+
+            this.autocomplete = new google.maps.places.Autocomplete(this.$refs.searchInput, {
+                fields: ['geometry', 'address_components', 'formatted_address'],
+            })
+            this.autocomplete.bindTo('bounds', this.map)
+
+            this.autocomplete.addListener('place_changed', () => {
+                const place = this.autocomplete.getPlace()
+                if (!place.geometry?.location) return
+                const lat = place.geometry.location.lat()
+                const lng = place.geometry.location.lng()
+                this.map.setCenter({ lat, lng })
+                this.map.setZoom(17)
+                this.marker.setPosition({ lat, lng })
+                this.updatePosition(lat, lng)
+            })
+
+            this.map.addListener('click', (e) => {
+                this.marker.setPosition(e.latLng)
+                this.updatePosition(e.latLng.lat(), e.latLng.lng())
+            })
+
+            this.marker.addListener('dragend', () => {
+                const pos = this.marker.getPosition()
+                this.updatePosition(pos.lat(), pos.lng())
+            })
+
+            setTimeout(() => google.maps.event.trigger(this.map, 'resize'), 200)
+        },
+
         updatePosition(lat, lng) {
             this.lat = lat
             this.lng = lng
             $wire.set('data.latitude', lat.toFixed(6))
             $wire.set('data.longitude', lng.toFixed(6))
+        },
+
+        detectLocation() {
+            if (!navigator.geolocation) return
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const lat = pos.coords.latitude
+                const lng = pos.coords.longitude
+                this.map.setCenter({ lat, lng })
+                this.map.setZoom(17)
+                this.marker.setPosition({ lat, lng })
+                this.updatePosition(lat, lng)
+            }, () => {}, { timeout: 10000, enableHighAccuracy: true })
         }
     }"
-    x-init="
-        const script = document.createElement('link')
-        script.rel = 'stylesheet'
-        script.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-        document.head.appendChild(script)
-
-        const js = document.createElement('script')
-        js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
-        js.onload = () => init()
-        document.body.appendChild(js)
-    "
-    class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+    class="space-y-3"
 >
-    <div x-ref="map" style="height: 300px; width: 100%;"></div>
-    <p class="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800">
-        Click on the map or drag the marker to set the store location. Lat: <span x-text="Number(lat).toFixed(6)"></span>, Lng: <span x-text="Number(lng).toFixed(6)"></span>
+    <input
+        x-ref="searchInput"
+        type="text"
+        placeholder="Start typing your store address..."
+        class="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:border-primary-600 focus:ring-1 focus:ring-primary-600"
+    />
+
+    <div class="flex items-center gap-2">
+        <button type="button" @click="detectLocation()" class="inline-flex items-center gap-1.5 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">
+            Use my current location
+        </button>
+        <span class="text-xs text-gray-500 dark:text-gray-400">or click on the map</span>
+    </div>
+
+    <div x-ref="map" class="rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden" style="height: 280px;"></div>
+
+    <p class="text-xs text-gray-500 dark:text-gray-400">
+        Coordinates: <span x-text="Number(lat).toFixed(6)"></span>, <span x-text="Number(lng).toFixed(6)"></span>
     </p>
 </div>
+@else
+<div class="rounded-lg border border-yellow-300 dark:border-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 px-4 py-3 text-sm text-yellow-700 dark:text-yellow-400">
+    Google Maps API key not configured. Add it in Settings &gt; Platform &gt; Google Maps API Key.
+</div>
+@endif

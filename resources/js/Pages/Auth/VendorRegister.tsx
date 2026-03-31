@@ -126,12 +126,16 @@ export default function VendorRegister() {
                             <MapLocationPicker
                                 latitude={data.latitude ? Number(data.latitude) : null}
                                 longitude={data.longitude ? Number(data.longitude) : null}
-                                onLocationChange={(lat, lng, address) => {
+                                onLocationChange={(lat, lng, components) => {
                                     setData(prev => ({
                                         ...prev,
                                         latitude: lat,
                                         longitude: lng,
-                                        ...(address ? { address } : {}),
+                                        address: components.address || prev.address,
+                                        city: components.city || prev.city,
+                                        state: components.state || prev.state,
+                                        country: components.country || prev.country,
+                                        postal_code: components.postalCode || prev.postal_code,
                                     }))
                                 }}
                             />

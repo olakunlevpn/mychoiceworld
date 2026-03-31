@@ -16,6 +16,8 @@ return [
     'state' => 'State',
     'country' => 'Country',
     'postal_code' => 'Postal Code',
+    'latitude' => 'Latitude',
+    'longitude' => 'Longitude',
     'location' => 'Location',
     'operating_hours' => 'Operating Hours',
     'status' => 'Status',

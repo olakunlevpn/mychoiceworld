@@ -85,6 +85,16 @@ class VendorForm
                                 ->required(),
                             TextInput::make('postal_code')
                                 ->label(__('vendor.postal_code')),
+                            TextInput::make('latitude')
+                                ->label(__('vendor.latitude'))
+                                ->numeric()
+                                ->step(0.000001)
+                                ->helperText('GPS latitude. Use Google Maps to find coordinates.'),
+                            TextInput::make('longitude')
+                                ->label(__('vendor.longitude'))
+                                ->numeric()
+                                ->step(0.000001)
+                                ->helperText('GPS longitude. Right-click any location on Google Maps to copy coordinates.'),
                         ])
                         ->columns(2),
 

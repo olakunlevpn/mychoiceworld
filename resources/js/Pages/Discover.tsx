@@ -1,7 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import PublicLayout from '@/Layouts/PublicLayout'
 import { useLocation } from '@/contexts/LocationContext'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import {
     Dialog, DialogBackdrop, DialogPanel,
     Disclosure, DisclosureButton, DisclosurePanel,
@@ -42,6 +42,12 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
     const { city, coordinates, isDetecting, detectLocation, openModal } = useLocation()
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
     const [wishlistedIds, setWishlistedIds] = useState<Set<number>>(new Set())
+
+    useEffect(() => {
+        if (coordinates && products.data.length > 0 && products.data[0].distance_km == null) {
+            router.reload({ data: { ...filters, lat: String(coordinates.lat), lng: String(coordinates.lng) }, only: ['products'] })
+        }
+    }, [coordinates])
 
     const applyFilter = useCallback((key: string, value: string) => {
         const params: Record<string, string> = { ...filters, [key]: value }
@@ -346,7 +352,7 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
                                                         />
                                                     </Link>
                                                     {product.distance_km != null && (
-                                                        <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
+                                                        <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-dark/80 px-2.5 py-1 backdrop-blur-sm">
                                                             <MapPinIcon className="size-3 text-primary-600" />
                                                             <span className="text-xs font-medium text-white">{product.distance_km!.toFixed(1)} km away</span>
                                                         </div>

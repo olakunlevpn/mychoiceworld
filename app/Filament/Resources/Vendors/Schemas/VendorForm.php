@@ -38,13 +38,15 @@ class VendorForm
                             FileUpload::make('logo')
                                 ->label(__('vendor.logo'))
                                 ->image()
+                                ->disk('public')
                                 ->directory('vendors/logos')
-                                ->nullable(),
+                                ->visibility('public'),
                             FileUpload::make('banner')
                                 ->label(__('vendor.banner'))
                                 ->image()
+                                ->disk('public')
                                 ->directory('vendors/banners')
-                                ->nullable(),
+                                ->visibility('public'),
                         ])
                         ->columns(2),
 

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Scout\Searchable;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 
@@ -53,6 +54,32 @@ class Vendor extends Model
             'rating_avg' => 'decimal:2',
             'location' => Point::class,
         ];
+    }
+
+    public function getLogoAttribute(?string $value): ?string
+    {
+        if (! $value) {
+            return null;
+        }
+
+        if (str_starts_with($value, '/') || str_starts_with($value, 'http')) {
+            return $value;
+        }
+
+        return Storage::disk('public')->url($value);
+    }
+
+    public function getBannerAttribute(?string $value): ?string
+    {
+        if (! $value) {
+            return null;
+        }
+
+        if (str_starts_with($value, '/') || str_starts_with($value, 'http')) {
+            return $value;
+        }
+
+        return Storage::disk('public')->url($value);
     }
 
     public function user(): BelongsTo

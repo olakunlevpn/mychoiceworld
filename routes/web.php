@@ -3,6 +3,7 @@
 use App\Enums\PageStatus;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Customer\AiMatchController;
+use App\Http\Controllers\Customer\BecomeVendorController;
 use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
 use App\Http\Controllers\Customer\NotificationController;
 use App\Http\Controllers\Customer\ReservationController as CustomerReservationController;
@@ -135,6 +136,10 @@ Route::middleware(['auth', 'verified', 'customer'])
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
         Route::put('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+
+        // Become a Vendor
+        Route::get('/become-vendor', [BecomeVendorController::class, 'create'])->name('become-vendor');
+        Route::post('/become-vendor', [BecomeVendorController::class, 'store'])->name('become-vendor.store');
     });
 
 // Vendor status page (pending/rejected vendors)

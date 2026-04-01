@@ -58,6 +58,11 @@ export default function Dashboard({ stats, recentReservations }: Props) {
                     <Link href="/customer/notifications" className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
                         Notifications
                     </Link>
+                    {settings.vendor_registration_enabled && (
+                        <Link href="/customer/become-vendor" className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 transition-colors">
+                            Become a Vendor
+                        </Link>
+                    )}
                 </div>
 
                 {/* Recent Reservations */}

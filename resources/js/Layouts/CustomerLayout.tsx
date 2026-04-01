@@ -70,6 +70,9 @@ export default function CustomerLayout({ children }: PropsWithChildren) {
                             <Link href="/customer/wishlist" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-3 py-3 text-base font-medium text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5">Wishlist</Link>
                             <Link href="/customer/reviews" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-3 py-3 text-base font-medium text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5">My Reviews</Link>
                             <Link href="/profile" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-3 py-3 text-base font-medium text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5">Profile</Link>
+                            {settings.vendor_registration_enabled && !auth.vendor && (
+                                <Link href="/customer/become-vendor" onClick={() => setMobileMenuOpen(false)} className="block rounded-md px-3 py-3 text-base font-medium text-primary-600 hover:bg-gray-100 dark:hover:bg-white/5">Become a Vendor</Link>
+                            )}
                             <button type="button" onClick={handleLogout} className="block w-full rounded-md px-3 py-3 text-left text-base font-medium text-red-400 hover:bg-gray-100 dark:hover:bg-white/5">Logout</button>
                         </div>
                     </DialogPanel>
@@ -153,6 +156,9 @@ export default function CustomerLayout({ children }: PropsWithChildren) {
                                                     <MenuItem><Link href="/customer/wishlist" className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 data-[focus]:bg-gray-100 dark:data-[focus]:bg-white/5">Wishlist</Link></MenuItem>
                                                     <MenuItem><Link href="/customer/reviews" className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 data-[focus]:bg-gray-100 dark:data-[focus]:bg-white/5">My Reviews</Link></MenuItem>
                                                     <MenuItem><Link href="/profile" className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 data-[focus]:bg-gray-100 dark:data-[focus]:bg-white/5">Edit Profile</Link></MenuItem>
+                                                    {settings.vendor_registration_enabled && !auth.vendor && (
+                                                        <MenuItem><Link href="/customer/become-vendor" className="block px-4 py-2 text-sm font-medium text-primary-600 data-[focus]:bg-gray-100 dark:data-[focus]:bg-white/5">Become a Vendor</Link></MenuItem>
+                                                    )}
                                                     <div className="border-t border-gray-200 dark:border-gray-700" />
                                                     <MenuItem><button type="button" onClick={handleLogout} className="block w-full px-4 py-2 text-left text-sm text-red-400 data-[focus]:bg-gray-100 dark:data-[focus]:bg-white/5">Logout</button></MenuItem>
                                                 </div>

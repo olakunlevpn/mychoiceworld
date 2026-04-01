@@ -132,28 +132,39 @@
     }"
     class="space-y-3"
 >
-    <input
-        x-ref="searchInput"
-        type="text"
-        placeholder="Start typing your store address..."
-        class="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:border-primary-600 focus:ring-1 focus:ring-primary-600"
-    />
-
-    <div class="flex items-center gap-2">
-        <button type="button" @click="detectLocation()" class="inline-flex items-center gap-1.5 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">
-            Use my current location
-        </button>
-        <span class="text-xs text-gray-500 dark:text-gray-400">or click on the map</span>
+    <div>
+        <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3">
+            <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white">Search Location</span>
+        </label>
+        <div class="fi-input-wrp mt-1 flex rounded-lg shadow-sm ring-1 ring-gray-950/10 transition duration-75 bg-white dark:bg-white/5 dark:ring-white/20 focus-within:ring-2 focus-within:ring-primary-600">
+            <div class="fi-input-wrp-content-ctn min-w-0 flex-1">
+                <input
+                    x-ref="searchInput"
+                    type="text"
+                    placeholder="Start typing your store address..."
+                    autocomplete="off"
+                    class="fi-input block w-full border-none bg-transparent py-1.5 pe-3 ps-3 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white dark:placeholder:text-gray-500"
+                />
+            </div>
+        </div>
+        <p class="fi-fo-field-wrp-helper-text mt-1 text-sm text-gray-500 dark:text-gray-400">Type an address or use the buttons below</p>
     </div>
 
-    <div x-ref="map" class="rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden" style="height: 280px;"></div>
+    <div class="flex items-center gap-2">
+        <x-filament::button size="xs" color="gray" icon="heroicon-m-map-pin" x-on:click="detectLocation()">
+            Use my current location
+        </x-filament::button>
+        <span class="text-xs text-gray-500 dark:text-gray-400">or click on the map to pin location</span>
+    </div>
+
+    <div x-ref="map" class="rounded-lg ring-1 ring-gray-950/10 dark:ring-white/20 overflow-hidden" style="height: 280px;"></div>
 
     <p class="text-xs text-gray-500 dark:text-gray-400">
         Coordinates: <span x-text="Number(lat).toFixed(6)"></span>, <span x-text="Number(lng).toFixed(6)"></span>
     </p>
 </div>
 @else
-<div class="rounded-lg border border-yellow-300 dark:border-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 px-4 py-3 text-sm text-yellow-700 dark:text-yellow-400">
+<div class="fi-fo-placeholder rounded-lg border border-warning-400 dark:border-warning-600 bg-warning-50 dark:bg-warning-950/50 px-4 py-3 text-sm text-warning-600 dark:text-warning-400">
     Google Maps API key not configured. Add it in Settings &gt; Platform &gt; Google Maps API Key.
 </div>
 @endif

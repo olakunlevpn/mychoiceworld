@@ -41,7 +41,7 @@ class RegisterVendor
                 'slug' => Str::slug($data->store_name).'-'.Str::random(5),
                 'phone' => $data->phone,
                 'whatsapp' => $data->whatsapp,
-                'email' => $data->email,
+                'email' => $data->store_email ?: $data->email,
                 'license_number' => $data->license_number,
                 'license_document' => $licenseDocumentPath,
                 'description' => $data->description,

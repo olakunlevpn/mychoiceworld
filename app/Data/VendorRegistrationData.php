@@ -14,6 +14,7 @@ class VendorRegistrationData extends Data
         public string $store_name,
         public string $phone,
         public ?string $whatsapp,
+        public ?string $store_email,
         public ?string $license_number,
         public ?UploadedFile $license_document,
         public ?string $description,

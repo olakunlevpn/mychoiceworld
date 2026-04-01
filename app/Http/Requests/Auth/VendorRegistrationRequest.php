@@ -26,6 +26,7 @@ class VendorRegistrationRequest extends FormRequest
             'store_name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:20'],
             'whatsapp' => ['nullable', 'string', 'max:20'],
+            'store_email' => ['nullable', 'email', 'max:255'],
             'license_number' => ['nullable', 'string', 'max:100'],
             'license_document' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
             'description' => ['nullable', 'string', 'max:2000'],

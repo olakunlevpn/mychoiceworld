@@ -130,7 +130,7 @@
             }, () => {}, { timeout: 10000, enableHighAccuracy: true })
         }
     }"
-    class="space-y-3"
+    class="space-y-4 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-4"
 >
     <div>
         <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3">

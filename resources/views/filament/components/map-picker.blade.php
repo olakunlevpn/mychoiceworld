@@ -130,34 +130,33 @@
             }, () => {}, { timeout: 10000, enableHighAccuracy: true })
         }
     }"
-    class="space-y-4 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-4"
+    style="padding: 16px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background: rgba(0,0,0,0.02);"
 >
-    <div>
-        <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3">
-            <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white">Search Location</span>
+    <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; color: inherit;">
+            Search Location
         </label>
-        <div class="fi-input-wrp mt-1 flex rounded-lg shadow-sm ring-1 ring-gray-950/10 transition duration-75 bg-white dark:bg-white/5 dark:ring-white/20 focus-within:ring-2 focus-within:ring-primary-600">
-            <div class="fi-input-wrp-content-ctn min-w-0 flex-1">
-                <input
-                    x-ref="searchInput"
-                    type="text"
-                    placeholder="Start typing your store address..."
-                    autocomplete="off"
-                    class="fi-input block w-full border-none bg-transparent py-1.5 pe-3 ps-3 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 dark:text-white dark:placeholder:text-gray-500"
-                />
-            </div>
+        <div class="fi-input-wrp" style="display: flex; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1);">
+            <input
+                x-ref="searchInput"
+                type="text"
+                placeholder="Start typing your store address..."
+                autocomplete="off"
+                class="fi-input"
+                style="width: 100%; border: none; background: transparent; padding: 8px 12px; font-size: 14px; outline: none; color: inherit;"
+            />
         </div>
-        <p class="fi-fo-field-wrp-helper-text mt-1 text-sm text-gray-500 dark:text-gray-400">Type an address or use the buttons below</p>
+        <p style="margin-top: 6px; font-size: 13px; color: #6b7280;">Type an address or use the buttons below</p>
     </div>
 
-    <div class="flex items-center gap-2">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
         <x-filament::button size="xs" color="gray" icon="heroicon-m-map-pin" x-on:click="detectLocation()">
             Use my current location
         </x-filament::button>
-        <span class="text-xs text-gray-500 dark:text-gray-400">or click on the map to pin location</span>
+        <span style="font-size: 13px; color: #6b7280;">or click on the map to pin location</span>
     </div>
 
-    <div x-ref="map" class="rounded-lg ring-1 ring-gray-950/10 dark:ring-white/20 overflow-hidden" style="height: 280px;"></div>
+    <div x-ref="map" style="height: 280px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); overflow: hidden;"></div>
 
     <p class="text-xs text-gray-500 dark:text-gray-400">
         Coordinates: <span x-text="Number(lat).toFixed(6)"></span>, <span x-text="Number(lng).toFixed(6)"></span>

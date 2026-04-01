@@ -32,10 +32,28 @@ export default function VendorRegister() {
         longitude: '' as string | number,
     })
 
+    const [submitError, setSubmitError] = useState('')
+
     const handleNext = () => {
         if (currentStep < 4) setCurrentStep(currentStep + 1)
         else {
-            post('/vendor/register', { forceFormData: true })
+            setSubmitError('')
+            post('/vendor/register', {
+                forceFormData: true,
+                onError: (errs) => {
+                    // Find which step has errors and go there
+                    if (errs.name || errs.email || errs.password || errs.password_confirmation) {
+                        setCurrentStep(1)
+                    } else if (errs.store_name || errs.phone) {
+                        setCurrentStep(2)
+                    } else if (errs.license_number || errs.license_document) {
+                        setCurrentStep(3)
+                    } else if (errs.address || errs.city || errs.state || errs.country) {
+                        setCurrentStep(4)
+                    }
+                    setSubmitError('Please fix the errors below and try again.')
+                },
+            })
         }
     }
 
@@ -148,6 +166,24 @@ export default function VendorRegister() {
                                 <div><label className={labelClass}>Country</label><input type="text" value={data.country} onChange={(e) => setData('country', e.target.value)} placeholder="India" className={inputClass} />{errors.country && <p className={errorClass}>{errors.country}</p>}</div>
                                 <div><label className={labelClass}>Postal code</label><input type="text" value={data.postal_code} onChange={(e) => setData('postal_code', e.target.value)} placeholder="400001" className={inputClass} /></div>
                             </div>
+                        </div>
+                    )}
+
+                    {/* Error banner */}
+                    {submitError && (
+                        <div className="mt-4 rounded-md bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                            {submitError}
+                        </div>
+                    )}
+
+                    {/* Validation errors from other steps */}
+                    {Object.keys(errors).length > 0 && (
+                        <div className="mt-4 rounded-md bg-red-500/10 px-4 py-3">
+                            <ul className="space-y-1 text-xs text-red-400">
+                                {Object.entries(errors).map(([key, msg]) => (
+                                    <li key={key}>{msg}</li>
+                                ))}
+                            </ul>
                         </div>
                     )}
 

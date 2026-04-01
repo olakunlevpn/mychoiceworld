@@ -71,6 +71,9 @@ class VendorForm
                     Tab::make(__('vendor.location'))
                         ->icon(Heroicon::MapPin)
                         ->schema([
+                            ViewField::make('map_picker')
+                                ->view('filament.components.map-picker')
+                                ->columnSpanFull(),
                             TextInput::make('address')
                                 ->label(__('vendor.address'))
                                 ->required()
@@ -86,19 +89,18 @@ class VendorForm
                                 ->required(),
                             TextInput::make('postal_code')
                                 ->label(__('vendor.postal_code')),
-                            ViewField::make('map_picker')
-                                ->view('filament.components.map-picker')
-                                ->columnSpanFull(),
                             TextInput::make('latitude')
                                 ->label(__('vendor.latitude'))
                                 ->numeric()
                                 ->step(0.000001)
-                                ->reactive(),
+                                ->reactive()
+                                ->hidden(),
                             TextInput::make('longitude')
                                 ->label(__('vendor.longitude'))
                                 ->numeric()
                                 ->step(0.000001)
-                                ->reactive(),
+                                ->reactive()
+                                ->hidden(),
                         ])
                         ->columns(2),
 

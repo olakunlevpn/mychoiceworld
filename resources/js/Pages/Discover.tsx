@@ -8,10 +8,10 @@ import {
     Menu, MenuButton, MenuItem, MenuItems,
 } from '@headlessui/react'
 import {
-    XMarkIcon, FunnelIcon, MapPinIcon, HeartIcon,
+    XMarkIcon, FunnelIcon, MapPinIcon,
     ChevronDownIcon, ChevronUpIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon,
 } from '@heroicons/react/24/outline'
-import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
+import ProductCard from '@/Components/ProductCard'
 import type { Product, Category, EventType, StylePreference, PaginatedResponse, SharedProps } from '@/types'
 
 interface GenderOption {
@@ -69,16 +69,6 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
         }
         router.get('/products', params, { preserveState: true })
     }, [coordinates])
-
-    const toggleWishlist = (id: number) => {
-        setWishlistedIds((prev) => {
-            const next = new Set(prev)
-            if (next.has(id)) next.delete(id)
-            else next.add(id)
-            return next
-        })
-        router.post('/customer/wishlist/toggle', { product_id: id }, { preserveState: true, preserveScroll: true })
-    }
 
     const activeFilterCount = Object.values(filters).filter(Boolean).length
 
@@ -342,39 +332,19 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
                                 <>
                                     <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-3 xl:gap-x-6">
                                         {products.data.map((product) => (
-                                            <div key={product.id} className="group relative">
-                                                <div className="relative overflow-hidden rounded-2xl">
-                                                    <Link href={`/products/${product.slug}`}>
-                                                        <img
-                                                            src={product.primary_image?.url || '/images/placeholder.jpg'}
-                                                            alt={product.name}
-                                                            className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                                            loading="lazy"
-                                                        />
-                                                    </Link>
-                                                    {product.distance_km != null && (
-                                                        <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-dark/80 px-2.5 py-1 backdrop-blur-sm">
-                                                            <MapPinIcon className="size-3 text-primary-600" />
-                                                            <span className="text-xs font-medium text-white">{product.distance_km!.toFixed(1)} km away</span>
-                                                        </div>
-                                                    )}
-                                                    <button type="button" onClick={() => toggleWishlist(product.id)} className="absolute right-2 top-2 rounded-full bg-dark/60 p-1.5 backdrop-blur-sm transition-colors hover:bg-dark/80">
-                                                        {wishlistedIds.has(product.id) ? <HeartSolidIcon className="size-4 text-red-500" /> : <HeartIcon className="size-4 text-white" />}
-                                                    </button>
-                                                    <div className="absolute inset-x-2 bottom-2 translate-y-2 opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
-                                                        <Link href={`/products/${product.slug}`} className="block w-full rounded-md bg-primary-600 px-3 py-2 text-center text-xs font-semibold text-white shadow-lg hover:bg-primary-700">
-                                                            Reserve
-                                                        </Link>
-                                                    </div>
-                                                </div>
-                                                <div className="mt-3">
-                                                    <Link href={`/products/${product.slug}`}>
-                                                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 transition-colors truncate">{product.name}</h3>
-                                                    </Link>
-                                                    <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{product.vendor?.store_name}</p>
-                                                    <p className="mt-1 text-sm font-bold text-primary-600">{settings.currency_symbol}{(product.price / 100).toFixed(0)}</p>
-                                                </div>
-                                            </div>
+                                            <ProductCard
+                                                key={product.id}
+                                                product={product}
+                                                wishlisted={wishlistedIds.has(product.id)}
+                                                onWishlistToggle={(id) => {
+                                                    setWishlistedIds((prev) => {
+                                                        const next = new Set(prev)
+                                                        if (next.has(id)) next.delete(id)
+                                                        else next.add(id)
+                                                        return next
+                                                    })
+                                                }}
+                                            />
                                         ))}
                                     </div>
 

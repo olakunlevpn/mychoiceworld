@@ -47,13 +47,13 @@ class VendorFactory extends Factory
             'whatsapp' => fake()->phoneNumber(),
             'email' => fake()->companyEmail(),
             'address' => fake()->streetAddress(),
-            'city' => 'New York',
-            'state' => 'NY',
-            'country' => 'US',
+            'city' => fake()->randomElement(['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Thrissur', 'Kollam', 'Bengaluru', 'Chennai', 'Mumbai', 'Delhi', 'Hyderabad']),
+            'state' => fake()->randomElement(['Kerala', 'Karnataka', 'Tamil Nadu', 'Maharashtra', 'Delhi', 'Telangana']),
+            'country' => 'India',
             'postal_code' => fake()->postcode(),
             'location' => new Point(
-                40.7128 + fake()->randomFloat(4, -0.15, 0.15),
-                -74.0060 + fake()->randomFloat(4, -0.15, 0.15),
+                fake()->randomFloat(4, 8.3, 28.6),
+                fake()->randomFloat(4, 73.0, 80.3),
             ),
             'operating_hours' => [
                 'monday' => ['open' => '09:00', 'close' => '18:00'],

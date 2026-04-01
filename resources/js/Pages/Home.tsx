@@ -1,6 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import PublicLayout from '@/Layouts/PublicLayout'
 import { useLocation } from '@/contexts/LocationContext'
+import ProductCard from '@/Components/ProductCard'
 import { useState, useEffect, useCallback } from 'react'
 import { StarIcon } from '@heroicons/react/24/solid'
 import { MapPinIcon } from '@heroicons/react/24/outline'
@@ -167,37 +168,9 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
                                 <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">No products within {selectedRadius} km. Showing all nearby products instead.</p>
                             )}
                             <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-6 sm:gap-x-6 lg:grid-cols-4">
-                                {displayProducts.slice(0, 8).map((product) => {
-                                    return (
-                                        <div key={product.id} className="group">
-                                            <div className="relative overflow-hidden rounded-2xl">
-                                                <Link href={`/products/${product.slug}`}>
-                                                    <img alt={product.name} src={product.primary_image?.url || '/images/placeholder.jpg'} className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
-                                                </Link>
-                                                {product.distance_km != null && (
-                                                    <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
-                                                        <MapPinIcon className="size-3 text-primary-600" />
-                                                        <span className="text-xs font-medium text-white">{Number(product.distance_km).toFixed(1)} km away</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="mt-3">
-                                                <Link href={`/products/${product.slug}`}>
-                                                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate group-hover:text-primary-600 transition-colors">{product.name}</h3>
-                                                </Link>
-                                                <div className="mt-1 flex items-center gap-1">
-                                                    {[0, 1, 2, 3, 4].map((i) => (
-                                                        <StarIcon key={i} className={`size-3.5 ${(product.vendor?.rating_avg ?? 0) > i ? 'text-yellow-400' : 'text-gray-600'}`} />
-                                                    ))}
-                                                </div>
-                                                <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{product.vendor?.store_name}</p>
-                                                <Link href={`/products/${product.slug}`} className="mt-2 block w-full rounded-md bg-primary-600 py-2 text-center text-sm font-semibold text-white hover:bg-primary-700">
-                                                    Reserve
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    )
-                                })}
+                                {displayProducts.slice(0, 8).map((product) => (
+                                    <ProductCard key={product.id} product={product} />
+                                ))}
                             </div>
                         </div>
                     </section>

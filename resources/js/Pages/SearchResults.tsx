@@ -1,6 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import PublicLayout from '@/Layouts/PublicLayout'
 import { useLocation } from '@/contexts/LocationContext'
+import ProductCard from '@/Components/ProductCard'
 import { MagnifyingGlassIcon, BuildingStorefrontIcon, MapPinIcon } from '@heroicons/react/24/outline'
 import { StarIcon } from '@heroicons/react/24/solid'
 import { useState, useRef, useCallback, useEffect } from 'react'
@@ -165,26 +166,7 @@ export default function SearchResults({ query, products, vendors }: Props) {
                         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Products</h2>
                         <div className="mt-4 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                             {products.map((product) => (
-                                <div key={product.id} className="group">
-                                    <div className="relative overflow-hidden rounded-2xl">
-                                        <Link href={`/products/${product.slug}`}>
-                                            <img src={product.primary_image?.url || '/images/placeholder.jpg'} alt={product.name} className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
-                                        </Link>
-                                        {product.distance_km != null && (
-                                            <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-dark/80 px-2 py-1 backdrop-blur-sm">
-                                                <MapPinIcon className="size-3 text-primary-600" />
-                                                <span className="text-xs font-medium text-white">{product.distance_km.toFixed(1)} km away</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="mt-3">
-                                        <Link href={`/products/${product.slug}`}>
-                                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 truncate">{product.name}</h3>
-                                        </Link>
-                                        <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{product.vendor?.store_name}</p>
-                                        <p className="mt-1 text-sm font-bold text-primary-600">{formatPrice(product.price)}</p>
-                                    </div>
-                                </div>
+                                <ProductCard key={product.id} product={product} />
                             ))}
                         </div>
                     </section>

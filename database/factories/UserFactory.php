@@ -78,13 +78,13 @@ class UserFactory extends Factory
     }
 
     /**
-     * Set last location within ~20km radius of NYC (40.7128, -74.0060).
+     * Set last location within ~20km radius of Thiruvananthapuram, India.
      */
     public function withLocation(): static
     {
         return $this->state(fn (array $attributes) => [
-            'last_latitude' => 40.7128 + fake()->randomFloat(4, -0.18, 0.18),
-            'last_longitude' => -74.0060 + fake()->randomFloat(4, -0.18, 0.18),
+            'last_latitude' => 8.5241 + fake()->randomFloat(4, -0.18, 0.18),
+            'last_longitude' => 76.9366 + fake()->randomFloat(4, -0.18, 0.18),
             'last_location_at' => fake()->dateTimeBetween('-7 days', 'now'),
         ]);
     }

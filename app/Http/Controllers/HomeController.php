@@ -76,6 +76,10 @@ class HomeController extends Controller
 
         $heroSlides = HeroSlide::active()->get();
 
+        $wishlistedIds = $request->user()
+            ? $request->user()->wishlists()->pluck('product_id')->toArray()
+            : [];
+
         return Inertia::render('Home', [
             'heroSlides' => $heroSlides,
             'featuredProducts' => $featuredProducts,
@@ -83,6 +87,7 @@ class HomeController extends Controller
             'eventTypes' => $eventTypes,
             'categories' => $categories,
             'recentReviews' => $recentReviews,
+            'wishlistedIds' => $wishlistedIds,
         ]);
     }
 }

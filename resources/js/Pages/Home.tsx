@@ -24,6 +24,7 @@ interface Props {
     eventTypes: EventType[]
     categories: Category[]
     recentReviews: (Review & { customer?: { id: number; name: string; avatar?: string }; vendor?: { id: number; store_name: string } })[]
+    wishlistedIds: number[]
 }
 
 const staticStats = [
@@ -40,11 +41,12 @@ const howItWorks = [
 ]
 
 
-export default function Home({ heroSlides, featuredProducts, featuredVendors, eventTypes, categories, recentReviews }: Props) {
+export default function Home({ heroSlides, featuredProducts, featuredVendors, eventTypes, categories, recentReviews, wishlistedIds: initialWishlistedIds = [] }: Props) {
     const { settings } = usePage().props as unknown as SharedProps
     const { city, coordinates, openModal } = useLocation()
     const [currentSlide, setCurrentSlide] = useState(0)
     const [selectedRadius, setSelectedRadius] = useState<number | null>(null)
+    const [wishlistedIds, setWishlistedIds] = useState<Set<number>>(new Set(initialWishlistedIds))
     const [reviewPage, setReviewPage] = useState(0)
     const reviewsPerPage = 3
     const totalReviewPages = Math.ceil(recentReviews.length / reviewsPerPage)
@@ -169,7 +171,19 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
                             )}
                             <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-6 sm:gap-x-6 lg:grid-cols-4">
                                 {displayProducts.slice(0, 8).map((product) => (
-                                    <ProductCard key={product.id} product={product} />
+                                    <ProductCard
+                                        key={product.id}
+                                        product={product}
+                                        wishlisted={wishlistedIds.has(product.id)}
+                                        onWishlistToggle={(id) => {
+                                            setWishlistedIds((prev) => {
+                                                const next = new Set(prev)
+                                                if (next.has(id)) next.delete(id)
+                                                else next.add(id)
+                                                return next
+                                            })
+                                        }}
+                                    />
                                 ))}
                             </div>
                         </div>

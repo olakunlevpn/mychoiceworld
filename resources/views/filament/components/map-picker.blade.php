@@ -93,11 +93,11 @@
             const country = this.getComponent(place, 'country')
             const postalCode = this.getComponent(place, 'postal_code')
 
-            if (address) $wire.set('data.address', address)
-            if (city) $wire.set('data.city', city)
-            if (state) $wire.set('data.state', state)
-            if (country) $wire.set('data.country', country)
-            if (postalCode) $wire.set('data.postal_code', postalCode)
+            if (address) $wire.set('data.address', address, false)
+            if (city) $wire.set('data.city', city, false)
+            if (state) $wire.set('data.state', state, false)
+            if (country) $wire.set('data.country', country, false)
+            if (postalCode) $wire.set('data.postal_code', postalCode, false)
         },
 
         reverseGeocode(lat, lng) {
@@ -113,8 +113,8 @@
         updatePosition(lat, lng) {
             this.lat = lat
             this.lng = lng
-            $wire.set('data.latitude', lat.toFixed(6))
-            $wire.set('data.longitude', lng.toFixed(6))
+            $wire.set('data.latitude', lat.toFixed(6), false)
+            $wire.set('data.longitude', lng.toFixed(6), false)
         },
 
         detectLocation() {

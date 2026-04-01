@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react'
+import { Head, Link, router } from '@inertiajs/react'
 import PublicLayout from '@/Layouts/PublicLayout'
 import { ClockIcon, XCircleIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 
@@ -47,8 +47,11 @@ export default function VendorStatus({ vendorStatus, rejectionReason }: Props) {
                         <Link href="/vendor/dashboard" className="mt-6 inline-flex items-center rounded-md bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">Go to Dashboard</Link>
                     </>
                 )}
-                <div className="mt-8">
+                <div className="mt-8 flex flex-col items-center gap-3">
                     <Link href="/" className="text-sm font-medium text-primary-600 hover:text-primary-500">&larr; Back to Home</Link>
+                    <button type="button" onClick={() => router.post('/logout')} className="text-sm font-medium text-red-400 hover:text-red-500">
+                        Sign Out
+                    </button>
                 </div>
             </div>
         </PublicLayout>

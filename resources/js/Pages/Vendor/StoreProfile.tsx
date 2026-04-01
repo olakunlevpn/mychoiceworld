@@ -18,8 +18,8 @@ export default function VendorStoreProfile({ vendor }: Props) {
         state: vendor.state || '',
         country: vendor.country || '',
         postal_code: vendor.postal_code || '',
-        latitude: '' as string | number,
-        longitude: '' as string | number,
+        latitude: (vendor as any).location?.coordinates?.[1] || '' as string | number,
+        longitude: (vendor as any).location?.coordinates?.[0] || '' as string | number,
     })
 
     const handleSubmit = (e: React.FormEvent) => {

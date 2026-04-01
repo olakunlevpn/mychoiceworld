@@ -1,12 +1,15 @@
 @php
     $apiKey = app(\App\Settings\GeneralSettings::class)->google_maps_api_key;
+    $record = $this->record ?? null;
+    $savedLat = $record?->location?->latitude ?? null;
+    $savedLng = $record?->location?->longitude ?? null;
 @endphp
 
 @if($apiKey)
 <div
     x-data="{
-        lat: $wire.data?.latitude || 20.5937,
-        lng: $wire.data?.longitude || 78.9629,
+        lat: {{ $savedLat ?? 20.5937 }},
+        lng: {{ $savedLng ?? 78.9629 }},
         map: null,
         marker: null,
         autocomplete: null,

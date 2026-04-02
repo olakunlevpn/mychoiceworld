@@ -111,6 +111,8 @@ class ProductBrowseController extends Controller
             abort(404);
         }
 
+        $product->load(['vendor']);
+
         if (! $product->vendor || $product->vendor->status !== VendorStatus::Approved) {
             abort(404);
         }

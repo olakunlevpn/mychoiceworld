@@ -17,6 +17,16 @@ class ReviewPolicy
         return $user->isCustomer();
     }
 
+    public function update(User $user, Review $review): bool
+    {
+        return $user->isAdmin();
+    }
+
+    public function delete(User $user, Review $review): bool
+    {
+        return $user->isAdmin();
+    }
+
     public function reply(User $user, Review $review): bool
     {
         return $user->vendor?->id === $review->vendor_id;

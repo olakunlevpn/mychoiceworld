@@ -75,6 +75,9 @@ export default function PublicLayout({ children }: PropsWithChildren) {
 
     return (
         <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-dark">
+            <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-primary-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white">
+                Skip to content
+            </a>
             {/* Mobile menu */}
             <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="relative z-40 lg:hidden">
                 <DialogBackdrop transition className="fixed inset-0 bg-black/25 transition-opacity duration-300 ease-linear data-[closed]:opacity-0" />
@@ -162,10 +165,10 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                                 </div>
 
                                 <div className="flex flex-1 items-center lg:hidden">
-                                    <button type="button" onClick={() => setMobileMenuOpen(true)} className="-ml-2 p-2 text-gray-700 dark:text-white">
+                                    <button type="button" onClick={() => setMobileMenuOpen(true)} aria-label="Open menu" className="-ml-2 p-2 text-gray-700 dark:text-white">
                                         <Bars3Icon aria-hidden="true" className="size-6" />
                                     </button>
-                                    <Link href="/search" className="ml-2 p-2 text-gray-700 dark:text-white">
+                                    <Link href="/search" aria-label="Search" className="ml-2 p-2 text-gray-700 dark:text-white">
                                         <MagnifyingGlassIcon aria-hidden="true" className="size-6" />
                                     </Link>
                                 </div>
@@ -175,16 +178,16 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                                 </Link>
 
                                 <div className="flex flex-1 items-center justify-end gap-1">
-                                    <Link href="/search" className="hidden p-2 text-gray-700 dark:text-white hover:text-primary-600 lg:block">
+                                    <Link href="/search" aria-label="Search" className="hidden p-2 text-gray-700 dark:text-white hover:text-primary-600 lg:block">
                                         <MagnifyingGlassIcon aria-hidden="true" className="size-6" />
                                     </Link>
                                     <button type="button" onClick={toggleTheme} className="p-2 text-gray-700 dark:text-white hover:text-primary-600 transition-colors" aria-label="Toggle theme">
                                         {isDark ? <SunIcon className="size-5" /> : <MoonIcon className="size-5" />}
                                     </button>
-                                    <Link href={auth.user ? '/customer/wishlist' : '/login'} className="p-2 text-gray-700 dark:text-white hover:text-primary-600">
+                                    <Link href={auth.user ? '/customer/wishlist' : '/login'} aria-label="Wishlist" className="p-2 text-gray-700 dark:text-white hover:text-primary-600">
                                         <HeartIcon aria-hidden="true" className="size-6" />
                                     </Link>
-                                    <Link href={auth.user ? (auth.user.role === 'admin' ? '/admin' : auth.user.role === 'vendor' ? '/vendor/dashboard' : '/customer/dashboard') : '/login'} className="ml-1 p-2 text-gray-700 dark:text-white hover:text-primary-600">
+                                    <Link href={auth.user ? (auth.user.role === 'admin' ? '/admin' : auth.user.role === 'vendor' ? '/vendor/dashboard' : '/customer/dashboard') : '/login'} aria-label="Account" className="ml-1 p-2 text-gray-700 dark:text-white hover:text-primary-600">
                                         <UserCircleIcon aria-hidden="true" className="size-6" />
                                     </Link>
                                 </div>
@@ -194,7 +197,7 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                 </nav>
             </header>
 
-            <div className="flex-1">
+            <div id="main-content" className="flex-1">
                 {children}
             </div>
 

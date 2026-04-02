@@ -99,16 +99,16 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
                     </div>
                 ))}
                 {/* Arrow controls */}
-                <button onClick={prevSlide} className="absolute left-4 top-1/2 z-20 -translate-y-1/2 flex size-10 items-center justify-center rounded-full bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white backdrop-blur-sm transition hover:bg-gray-300 dark:hover:bg-white/20 sm:size-12">
+                <button type="button" onClick={prevSlide} aria-label="Previous slide" className="absolute left-4 top-1/2 z-20 -translate-y-1/2 flex size-10 items-center justify-center rounded-full bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white backdrop-blur-sm transition hover:bg-gray-300 dark:hover:bg-white/20 sm:size-12">
                     <svg className="size-5 sm:size-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
                 </button>
-                <button onClick={nextSlide} className="absolute right-4 top-1/2 z-20 -translate-y-1/2 flex size-10 items-center justify-center rounded-full bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white backdrop-blur-sm transition hover:bg-gray-300 dark:hover:bg-white/20 sm:size-12">
+                <button type="button" onClick={nextSlide} aria-label="Next slide" className="absolute right-4 top-1/2 z-20 -translate-y-1/2 flex size-10 items-center justify-center rounded-full bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white backdrop-blur-sm transition hover:bg-gray-300 dark:hover:bg-white/20 sm:size-12">
                     <svg className="size-5 sm:size-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
                 </button>
                 {/* Dots */}
                 <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-x-2.5">
                     {heroSlides.map((_, index) => (
-                        <button key={index} onClick={() => setCurrentSlide(index)} className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide ? 'w-8 bg-primary-600' : 'w-2 bg-black/30 dark:bg-white/40'}`} />
+                        <button key={index} type="button" onClick={() => setCurrentSlide(index)} aria-label={`Go to slide ${index + 1}`} className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide ? 'w-8 bg-primary-600' : 'w-2 bg-black/30 dark:bg-white/40'}`} />
                     ))}
                 </div>
             </div>

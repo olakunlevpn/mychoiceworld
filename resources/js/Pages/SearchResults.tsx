@@ -21,12 +21,14 @@ interface Props {
     query: string
     products: (Product & { primary_image?: ProductImage; vendor?: { store_name: string; slug: string; city: string }; category?: { id: number; name: string } })[]
     vendors: Vendor[]
+    wishlistedIds?: number[]
 }
 
-export default function SearchResults({ query, products, vendors }: Props) {
+export default function SearchResults({ query, products, vendors, wishlistedIds: initialWishlistedIds = [] }: Props) {
     const { settings } = usePage().props as unknown as SharedProps
     const { coordinates } = useLocation()
     const [search, setSearch] = useState(query)
+    const [wishlistedIds, setWishlistedIds] = useState<Set<number>>(new Set(initialWishlistedIds))
     const [suggestions, setSuggestions] = useState<Suggestion[]>([])
     const [showSuggestions, setShowSuggestions] = useState(false)
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -166,7 +168,19 @@ export default function SearchResults({ query, products, vendors }: Props) {
                         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Products</h2>
                         <div className="mt-4 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                             {products.map((product) => (
-                                <ProductCard key={product.id} product={product} />
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                    wishlisted={wishlistedIds.has(product.id)}
+                                    onWishlistToggle={(id) => {
+                                        setWishlistedIds((prev) => {
+                                            const next = new Set(prev)
+                                            if (next.has(id)) next.delete(id)
+                                            else next.add(id)
+                                            return next
+                                        })
+                                    }}
+                                />
                             ))}
                         </div>
                     </section>

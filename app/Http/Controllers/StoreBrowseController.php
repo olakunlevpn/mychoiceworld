@@ -97,7 +97,7 @@ class StoreBrowseController extends Controller
             'vendor' => $vendor->only([
                 'id', 'store_name', 'slug', 'logo', 'banner', 'description',
                 'phone', 'whatsapp', 'email', 'address', 'city', 'state',
-                'country', 'operating_hours', 'rating_avg', 'rating_count',
+                'country', 'operating_hours', 'rating_avg', 'rating_count', 'is_featured',
             ]),
             'products' => $products,
             'reviews' => $reviews,

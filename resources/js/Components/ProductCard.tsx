@@ -62,7 +62,7 @@ export default function ProductCard({ product, wishlisted = false, onWishlistTog
                         <span className="text-xs font-medium text-white">{Number(product.distance_km).toFixed(1)} km away</span>
                     </div>
                 )}
-                <button type="button" onClick={handleWishlistClick} className="absolute right-2 top-2 rounded-full bg-dark/60 p-1.5 backdrop-blur-sm transition-colors hover:bg-dark/80">
+                <button type="button" onClick={handleWishlistClick} aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'} className="absolute right-2 top-2 rounded-full bg-dark/60 p-1.5 backdrop-blur-sm transition-colors hover:bg-dark/80">
                     {wishlisted ? <HeartSolid className="size-4 text-red-500" /> : <HeartOutline className="size-4 text-white" />}
                 </button>
                 {showReserveButton && (

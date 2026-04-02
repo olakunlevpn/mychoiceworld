@@ -109,10 +109,15 @@ class SearchController extends Controller
                 ->get();
         }
 
+        $wishlistedIds = $request->user()
+            ? $request->user()->wishlists()->pluck('product_id')->toArray()
+            : [];
+
         return Inertia::render('SearchResults', [
             'query' => $query,
             'products' => $products,
             'vendors' => $vendors,
+            'wishlistedIds' => $wishlistedIds,
         ]);
     }
 }

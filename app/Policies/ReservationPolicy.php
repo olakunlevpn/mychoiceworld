@@ -24,7 +24,7 @@ class ReservationPolicy
 
     public function updateStatus(User $user, Reservation $reservation): bool
     {
-        return $user->vendor?->id === $reservation->vendor_id;
+        return $user->isAdmin() || $user->vendor?->id === $reservation->vendor_id;
     }
 
     public function cancel(User $user, Reservation $reservation): bool

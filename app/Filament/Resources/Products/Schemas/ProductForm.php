@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Products\Schemas;
 
 use App\Enums\Gender;
 use App\Enums\ProductStatus;
+use App\Settings\GeneralSettings;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -53,20 +54,20 @@ class ProductForm
                         TextInput::make('price')
                             ->label(__('product.price'))
                             ->numeric()
-                            ->prefix('$')
+                            ->prefix(fn () => app(GeneralSettings::class)->currency_symbol)
                             ->required()
                             ->formatStateUsing(fn ($state) => $state ? $state / 100 : null)
                             ->dehydrateStateUsing(fn ($state) => $state ? (int) ($state * 100) : null),
                         TextInput::make('compare_price')
                             ->label(__('product.compare_price'))
                             ->numeric()
-                            ->prefix('$')
+                            ->prefix(fn () => app(GeneralSettings::class)->currency_symbol)
                             ->formatStateUsing(fn ($state) => $state ? $state / 100 : null)
                             ->dehydrateStateUsing(fn ($state) => $state ? (int) ($state * 100) : null),
                         TextInput::make('currency')
                             ->label(__('product.currency'))
                             ->disabled()
-                            ->default('USD'),
+                            ->default(fn () => app(GeneralSettings::class)->currency_code),
                     ]),
                 ]),
             Section::make(__('product.attributes'))

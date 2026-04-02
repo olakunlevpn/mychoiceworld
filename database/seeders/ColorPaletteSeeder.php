@@ -110,13 +110,16 @@ class ColorPaletteSeeder extends Seeder
 
         foreach ($palettes as $skinTone => $colors) {
             foreach ($colors as [$colorName, $hex, $score]) {
-                ColorPalette::create([
-                    'skin_tone' => $skinTone,
-                    'color_name' => $colorName,
-                    'color_hex' => $hex,
-                    'season' => fake()->optional(0.5)->randomElement(['spring', 'summer', 'autumn', 'winter']),
-                    'score' => $score,
-                ]);
+                $seasons = ['spring', 'summer', 'autumn', 'winter'];
+
+                ColorPalette::firstOrCreate(
+                    ['skin_tone' => $skinTone, 'color_hex' => $hex],
+                    [
+                        'color_name' => $colorName,
+                        'season' => $seasons[array_rand($seasons)],
+                        'score' => $score,
+                    ]
+                );
             }
         }
     }

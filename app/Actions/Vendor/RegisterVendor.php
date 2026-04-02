@@ -18,12 +18,13 @@ class RegisterVendor
     public function execute(VendorRegistrationData $data): Vendor
     {
         return DB::transaction(function () use ($data) {
-            $user = User::create([
+            $user = User::forceCreate([
                 'name' => $data->name,
                 'email' => $data->email,
                 'password' => Hash::make($data->password),
                 'phone' => $data->phone,
                 'role' => UserRole::Vendor,
+                'is_active' => true,
             ]);
 
             $licenseDocumentPath = null;

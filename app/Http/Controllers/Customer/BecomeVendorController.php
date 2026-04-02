@@ -80,7 +80,7 @@ class BecomeVendorController extends Controller
             'status' => VendorStatus::Pending,
         ]);
 
-        $user->update(['role' => UserRole::Vendor]);
+        $user->forceFill(['role' => UserRole::Vendor])->save();
 
         event(new VendorRegistered($vendor));
 

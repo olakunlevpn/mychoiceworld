@@ -71,7 +71,7 @@ Route::post('/contact', function (Request $request) {
     ContactMessage::create($request->only(['name', 'email', 'subject', 'message']));
 
     return back()->with('success', 'Your message has been sent. We\'ll get back to you soon.');
-})->name('contact.send');
+})->middleware('throttle:5,1')->name('contact.send');
 Route::post('/newsletter/subscribe', function (Request $request) {
     $request->validate(['email' => 'required|email|unique:newsletter_subscribers,email']);
     NewsletterSubscriber::create(['email' => $request->input('email')]);
@@ -80,7 +80,7 @@ Route::post('/newsletter/subscribe', function (Request $request) {
         ->send(new NewsletterWelcome($request->input('email')));
 
     return back()->with('success', 'You\'ve been subscribed to our newsletter.');
-})->name('newsletter.subscribe');
+})->middleware('throttle:5,1')->name('newsletter.subscribe');
 
 // Dashboard redirect based on role
 Route::get('/dashboard', function () {

@@ -74,7 +74,7 @@ class UsersTable
                         ->color(fn (User $record) => $record->is_active ? 'danger' : 'success')
                         ->requiresConfirmation()
                         ->action(function (User $record) {
-                            $record->update(['is_active' => ! $record->is_active]);
+                            $record->forceFill(['is_active' => ! $record->is_active])->save();
                             Notification::make()
                                 ->title(__('settings.saved'))
                                 ->success()

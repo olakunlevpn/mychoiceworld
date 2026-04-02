@@ -123,9 +123,9 @@ class EditProfile extends Page
     {
         $data = $this->passwordForm->getState();
 
-        Auth::user()->update([
+        Auth::user()->forceFill([
             'password' => Hash::make($data['password']),
-        ]);
+        ])->save();
 
         $this->passwordForm->fill();
 

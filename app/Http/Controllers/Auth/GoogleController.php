@@ -58,7 +58,7 @@ class GoogleController extends Controller
                     'avatar' => $user->avatar ?: $googleUser->getAvatar(),
                 ]);
             } else {
-                $user = User::create([
+                $user = User::forceCreate([
                     'name' => $googleUser->getName(),
                     'email' => $googleUser->getEmail(),
                     'google_id' => $googleUser->getId(),

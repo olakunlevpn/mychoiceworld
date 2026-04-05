@@ -3,7 +3,7 @@ import PublicLayout from '@/Layouts/PublicLayout'
 import { useLocation } from '@/contexts/LocationContext'
 import { StarIcon } from '@heroicons/react/24/solid'
 import { MagnifyingGlassIcon, MapPinIcon } from '@heroicons/react/24/outline'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Vendor, PaginatedResponse, SharedProps } from '@/types'
 
 interface Props {
@@ -14,6 +14,12 @@ interface Props {
 export default function Stores({ vendors, filters }: Props) {
     const { coordinates } = useLocation()
     const [search, setSearch] = useState(filters.search || '')
+
+    useEffect(() => {
+        if (coordinates) {
+            router.reload({ data: { ...filters, lat: String(coordinates.lat), lng: String(coordinates.lng) }, only: ['vendors'] })
+        }
+    }, [coordinates])
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault()

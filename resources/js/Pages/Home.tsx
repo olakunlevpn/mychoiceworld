@@ -69,7 +69,7 @@ export default function Home({ heroSlides, featuredProducts, featuredVendors, ev
     }, [nextSlide])
 
     useEffect(() => {
-        if (coordinates && featuredProducts.length > 0 && featuredProducts[0].distance_km == null) {
+        if (coordinates) {
             router.reload({ data: { lat: coordinates.lat, lng: coordinates.lng }, only: ['featuredProducts', 'featuredVendors'] })
         }
     }, [coordinates])

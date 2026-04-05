@@ -35,7 +35,7 @@ export default function StoreProfile({ vendor, vendorDistanceKm, products, revie
     const { coordinates } = useLocation()
 
     useEffect(() => {
-        if (coordinates && vendorDistanceKm == null) {
+        if (coordinates) {
             router.reload({ data: { lat: coordinates.lat, lng: coordinates.lng }, only: ['vendorDistanceKm'] })
         }
     }, [coordinates])

@@ -8,6 +8,7 @@ interface Coordinates {
 interface LocationContextType {
     city: string
     setCity: (city: string) => void
+    setLocation: (name: string, coords: Coordinates) => void
     coordinates: Coordinates | null
     isDetecting: boolean
     detectLocation: () => void
@@ -110,6 +111,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
             value={{
                 city,
                 setCity: updateCity,
+                setLocation: updateLocation,
                 coordinates,
                 isDetecting,
                 detectLocation,

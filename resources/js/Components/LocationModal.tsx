@@ -20,7 +20,7 @@ interface Suggestion {
 }
 
 export default function LocationModal() {
-    const { city, setCity, isDetecting, detectLocation, isModalOpen, closeModal } = useLocation()
+    const { city, setCity, setLocation, isDetecting, detectLocation, isModalOpen, closeModal } = useLocation()
     const [inputValue, setInputValue] = useState(city)
     const [suggestions, setSuggestions] = useState<Suggestion[]>([])
     const [showSuggestions, setShowSuggestions] = useState(false)
@@ -65,13 +65,11 @@ export default function LocationModal() {
         const state = addr?.state || ''
         const displayName = [locality, district, state].filter(Boolean).join(', ') || suggestion.display_name
 
+        const coords = { lat: parseFloat(suggestion.lat), lng: parseFloat(suggestion.lon) }
         setInputValue(displayName)
-        setCity(displayName)
+        setLocation(displayName, coords)
         setSuggestions([])
         setShowSuggestions(false)
-
-        const coords = { lat: parseFloat(suggestion.lat), lng: parseFloat(suggestion.lon) }
-        localStorage.setItem('location_coords', JSON.stringify(coords))
         closeModal()
     }
 
@@ -91,7 +89,7 @@ export default function LocationModal() {
             const data = await res.json()
             if (data[0]?.lat && data[0]?.lon) {
                 const coords = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) }
-                localStorage.setItem('location_coords', JSON.stringify(coords))
+                setLocation(trimmed, coords)
             }
         } catch { /* geocoding failed silently */ }
     }

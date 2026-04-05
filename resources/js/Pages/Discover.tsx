@@ -45,7 +45,7 @@ export default function Discover({ products, categories, eventTypes, stylePrefer
     const [wishlistedIds, setWishlistedIds] = useState<Set<number>>(new Set(initialWishlistedIds))
 
     useEffect(() => {
-        if (coordinates && products.data.length > 0 && products.data[0].distance_km == null) {
+        if (coordinates) {
             router.reload({ data: { ...filters, lat: String(coordinates.lat), lng: String(coordinates.lng) }, only: ['products'] })
         }
     }, [coordinates])

@@ -40,7 +40,7 @@ export default function ProductDetail({ product, relatedProducts, vendorDistance
     const { coordinates } = useLocation()
 
     useEffect(() => {
-        if (coordinates && vendorDistanceKm == null) {
+        if (coordinates) {
             router.reload({ data: { lat: coordinates.lat, lng: coordinates.lng }, only: ['vendorDistanceKm', 'relatedProducts'] })
         }
     }, [coordinates])

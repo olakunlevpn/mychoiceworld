@@ -122,7 +122,7 @@ class ProductBrowseController extends Controller
         $hasCoords = $lat && $lng;
 
         $product->load([
-            'images' => fn ($q) => $q->where('url', 'NOT LIKE', '%placeholder%')->orderBy('sort_order'),
+            'images' => fn ($q) => $q->orderBy('sort_order'),
             'variants' => fn ($q) => $q->where('is_active', true),
             'vendor:id,store_name,slug,logo,city,phone,whatsapp,email,address,operating_hours,rating_avg,rating_count',
             'category:id,name,slug',

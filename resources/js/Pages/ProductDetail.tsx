@@ -46,10 +46,13 @@ export default function ProductDetail({ product, relatedProducts, vendorDistance
     }, [coordinates])
     const [selectedColor, setSelectedColor] = useState(colors[0]?.name || '')
 
+    const realImages = product.images.filter(img => img.url && !img.url.includes('placeholder'))
+    const imageSource = realImages.length > 0 ? realImages : product.images
+
     const filteredImages = selectedColor
-        ? product.images.filter(img => !img.color || img.color.toLowerCase() === selectedColor.toLowerCase())
-        : product.images
-    const displayImages = filteredImages.length > 0 ? filteredImages : product.images
+        ? imageSource.filter(img => !img.color || img.color.toLowerCase() === selectedColor.toLowerCase())
+        : imageSource
+    const displayImages = filteredImages.length > 0 ? filteredImages : imageSource
 
     const [activeImage, setActiveImage] = useState(displayImages[0] || null)
 

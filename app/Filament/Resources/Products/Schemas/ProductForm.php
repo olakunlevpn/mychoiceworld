@@ -88,6 +88,7 @@ class ProductForm
                         Select::make('status')
                             ->label(__('product.status'))
                             ->options(ProductStatus::class)
+                            ->default(ProductStatus::Active)
                             ->required(),
                         Toggle::make('is_featured')
                             ->label(__('product.is_featured')),

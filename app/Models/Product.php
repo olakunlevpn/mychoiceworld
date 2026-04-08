@@ -67,7 +67,9 @@ class Product extends Model
 
     public function primaryImage(): HasOne
     {
-        return $this->hasOne(ProductImage::class)->where('is_primary', true);
+        return $this->hasOne(ProductImage::class)
+            ->where('url', 'NOT LIKE', '%placeholder%')
+            ->where('is_primary', true);
     }
 
     public function variants(): HasMany

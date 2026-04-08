@@ -27,8 +27,11 @@ class ImagesRelationManager extends RelationManager
             FileUpload::make('url')
                 ->label(__('product.image_url'))
                 ->image()
+                ->disk('public')
                 ->directory('products')
-                ->required(),
+                ->visibility('public')
+                ->required()
+                ->dehydrateStateUsing(fn ($state) => is_array($state) ? collect($state)->first() : $state),
             TextInput::make('alt_text')
                 ->label(__('product.alt_text'))
                 ->maxLength(255),
@@ -50,7 +53,8 @@ class ImagesRelationManager extends RelationManager
         return $table
             ->columns([
                 ImageColumn::make('url')
-                    ->label(__('product.image_url')),
+                    ->label(__('product.image_url'))
+                    ->disk('public'),
                 TextColumn::make('alt_text')
                     ->label(__('product.alt_text')),
                 TextColumn::make('color')

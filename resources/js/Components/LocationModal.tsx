@@ -138,8 +138,18 @@ export default function LocationModal() {
                             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
                             name="city" id="location-city" placeholder="Search for area, street name..."
                             autoComplete="off"
-                            className="block w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/5 px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600"
+                            className="block w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/5 px-4 py-2.5 pr-10 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-primary-600 focus:outline-none focus:ring-1 focus:ring-primary-600"
                         />
+                        {inputValue && (
+                            <button
+                                type="button"
+                                onClick={() => { setInputValue(''); setSuggestions([]); setShowSuggestions(false) }}
+                                aria-label="Clear location"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                            >
+                                <XMarkIcon className="size-4" />
+                            </button>
+                        )}
                         {showSuggestions && suggestions.length > 0 && (
                             <div className="absolute left-0 right-0 z-10 mt-1 max-h-60 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg">
                                 {suggestions.map((s, i) => (

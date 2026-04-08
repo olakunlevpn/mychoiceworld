@@ -106,11 +106,14 @@ class ProductController extends Controller
         $this->authorize('update', $product);
 
         $request->validate([
-            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'images' => ['required', 'array'],
+            'images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'alt_text' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $action->execute($product, $request->file('image'), $request->input('alt_text'));
+        foreach ($request->file('images', []) as $file) {
+            $action->execute($product, $file, $request->input('alt_text'));
+        }
 
         return back()->with('success', __('product.image_uploaded'));
     }

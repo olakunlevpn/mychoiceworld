@@ -65,6 +65,31 @@ class ProductImage extends Model
         return $this->attributes['url'] ?? null;
     }
 
+    protected static function booted(): void
+    {
+        static::created(function (ProductImage $image): void {
+            $rawUrl = $image->getRawUrl();
+
+            // When a real image is added, clean up placeholder images for the same product
+            if ($rawUrl && ! str_contains($rawUrl, 'placeholder')) {
+                ProductImage::where('product_id', $image->product_id)
+                    ->where('id', '!=', $image->id)
+                    ->where('url', 'LIKE', '%placeholder%')
+                    ->delete();
+
+                // Set as primary if no other primary exists
+                $hasPrimary = ProductImage::where('product_id', $image->product_id)
+                    ->where('id', '!=', $image->id)
+                    ->where('is_primary', true)
+                    ->exists();
+
+                if (! $hasPrimary) {
+                    $image->update(['is_primary' => true]);
+                }
+            }
+        });
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

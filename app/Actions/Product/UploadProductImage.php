@@ -13,6 +13,18 @@ class UploadProductImage
     {
         $path = $file->store('products/'.$product->id, 'public');
 
+        // Check if product only has placeholder images
+        $hasRealImages = $product->images()
+            ->where('url', 'NOT LIKE', '%placeholder%')
+            ->exists();
+
+        // If this is the first real upload, remove all placeholders
+        if (! $hasRealImages) {
+            $product->images()
+                ->where('url', 'LIKE', '%placeholder%')
+                ->delete();
+        }
+
         $isPrimary = $product->images()->count() === 0;
         $sortOrder = $product->images()->max('sort_order') + 1;
 

@@ -117,7 +117,9 @@ export interface ProductImage {
     id: number;
     product_id: number;
     url: string;
+    public_url?: string;
     thumbnail_url?: string;
+    public_thumbnail_url?: string;
     alt_text?: string;
     color?: string;
     sort_order: number;

@@ -130,7 +130,7 @@ export default function ProductDetail({ product, relatedProducts, vendorDistance
                                 onMouseLeave={handleImageLeave}
                                 onClick={() => setLightboxOpen(true)}
                             >
-                                <img src={activeImage.url} alt={activeImage.alt_text || product.name} className="size-full object-cover transition-transform duration-200" style={zoomStyle} />
+                                <img src={activeImage.public_url || activeImage.url} alt={activeImage.alt_text || product.name} className="size-full object-cover transition-transform duration-200" style={zoomStyle} />
                             </div>
                         )}
                         {displayImages.length > 1 && (
@@ -156,7 +156,7 @@ export default function ProductDetail({ product, relatedProducts, vendorDistance
                                                 activeImage?.id === image.id ? 'border-primary-600' : 'border-transparent hover:border-gray-600'
                                             )}
                                         >
-                                            <img src={image.thumbnail_url || image.url} alt={image.alt_text || ''} className="size-full object-cover" />
+                                            <img src={image.public_thumbnail_url || image.thumbnail_url || image.public_url || image.url} alt={image.alt_text || ''} className="size-full object-cover" />
                                         </button>
                                     ))}
                                 </div>
@@ -439,7 +439,7 @@ export default function ProductDetail({ product, relatedProducts, vendorDistance
                         <button type="button" aria-label="Previous image" onClick={(e) => { e.stopPropagation(); const idx = product.images.findIndex(i => i.id === activeImage.id); if (idx > 0) setActiveImage(product.images[idx - 1]) }} className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors">
                             <ChevronLeftIcon className="size-6" />
                         </button>
-                        <img src={activeImage.url} alt={activeImage.alt_text || product.name} className="max-h-[85vh] max-w-[85vw] object-contain" onClick={(e) => e.stopPropagation()} />
+                        <img src={activeImage.public_url || activeImage.url} alt={activeImage.alt_text || product.name} className="max-h-[85vh] max-w-[85vw] object-contain" onClick={(e) => e.stopPropagation()} />
                         <button type="button" aria-label="Next image" onClick={(e) => { e.stopPropagation(); const idx = product.images.findIndex(i => i.id === activeImage.id); if (idx < product.images.length - 1) setActiveImage(product.images[idx + 1]) }} className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors">
                             <ChevronRightIcon className="size-6" />
                         </button>

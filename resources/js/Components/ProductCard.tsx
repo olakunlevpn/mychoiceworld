@@ -10,7 +10,7 @@ interface ProductCardProps {
         slug: string
         price: number
         distance_km?: number | null
-        primary_image?: { url: string } | null
+        primary_image?: { url: string; public_url?: string } | null
         vendor?: { store_name: string; slug: string } | null
     }
     wishlisted?: boolean
@@ -50,7 +50,7 @@ export default function ProductCard({ product, wishlisted = false, onWishlistTog
             <div className="relative overflow-hidden rounded-2xl">
                 <Link href={`/products/${product.slug}`}>
                     <img
-                        src={product.primary_image?.url || '/images/placeholder.jpg'}
+                        src={product.primary_image?.public_url || product.primary_image?.url || '/images/placeholder.jpg'}
                         alt={product.name}
                         className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         loading="lazy"

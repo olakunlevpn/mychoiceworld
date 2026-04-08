@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,6 +21,8 @@ class ProductImage extends Model
         'is_primary',
     ];
 
+    protected $appends = ['public_url', 'public_thumbnail_url'];
+
     protected function casts(): array
     {
         return [
@@ -30,34 +31,34 @@ class ProductImage extends Model
         ];
     }
 
-    protected function url(): Attribute
+    public function getPublicUrlAttribute(): ?string
     {
-        return Attribute::get(function (?string $value): ?string {
-            if (! $value) {
-                return null;
-            }
+        $value = $this->attributes['url'] ?? null;
 
-            if (str_starts_with($value, '/') || str_starts_with($value, 'http')) {
-                return $value;
-            }
+        if (! $value) {
+            return null;
+        }
 
-            return Storage::disk('public')->url($value);
-        });
+        if (str_starts_with($value, '/') || str_starts_with($value, 'http')) {
+            return $value;
+        }
+
+        return Storage::disk('public')->url($value);
     }
 
-    protected function thumbnailUrl(): Attribute
+    public function getPublicThumbnailUrlAttribute(): ?string
     {
-        return Attribute::get(function (?string $value): ?string {
-            if (! $value) {
-                return null;
-            }
+        $value = $this->attributes['thumbnail_url'] ?? null;
 
-            if (str_starts_with($value, '/') || str_starts_with($value, 'http')) {
-                return $value;
-            }
+        if (! $value) {
+            return null;
+        }
 
-            return Storage::disk('public')->url($value);
-        });
+        if (str_starts_with($value, '/') || str_starts_with($value, 'http')) {
+            return $value;
+        }
+
+        return Storage::disk('public')->url($value);
     }
 
     public function getRawUrl(): ?string
@@ -70,14 +71,12 @@ class ProductImage extends Model
         static::created(function (ProductImage $image): void {
             $rawUrl = $image->getRawUrl();
 
-            // When a real image is added, clean up placeholder images for the same product
             if ($rawUrl && ! str_contains($rawUrl, 'placeholder')) {
                 ProductImage::where('product_id', $image->product_id)
                     ->where('id', '!=', $image->id)
                     ->where('url', 'LIKE', '%placeholder%')
                     ->delete();
 
-                // Set as primary if no other primary exists
                 $hasPrimary = ProductImage::where('product_id', $image->product_id)
                     ->where('id', '!=', $image->id)
                     ->where('is_primary', true)

@@ -37,7 +37,7 @@ class SearchController extends Controller
                 'name' => $p->name,
                 'slug' => $p->slug,
                 'url' => "/products/{$p->slug}",
-                'image' => $p->primaryImage?->url,
+                'image' => $p->primaryImage?->public_url,
                 'subtitle' => $p->vendor?->store_name,
             ]);
 
